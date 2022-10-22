@@ -193,6 +193,7 @@ public:
        _extrusion *extrusion;
 };
 
+/*************************************************************************/
 class _guardabarros: public _triangulos3D
 {
 public:
@@ -208,6 +209,7 @@ public:
        vector<_extrusion*> curva;
 };
 
+/*************************************************************************/
 class _carroceria_lateral: public _triangulos3D
 {
 public:
@@ -236,6 +238,7 @@ public:
        _semicilindro semicilindro;
 };
 
+/*************************************************************************/
 class _rueda: public _triangulos3D
 {
 public:
@@ -249,6 +252,7 @@ public:
        _rotacion rotacion;
 };
 
+/*************************************************************************/
 class _retrovisor: public _triangulos3D
 {
 public:
@@ -264,6 +268,7 @@ public:
        _cilindro cilindro;
 };
 
+/*************************************************************************/
 class _puerta: public _triangulos3D
 {
 public:
@@ -279,6 +284,41 @@ public:
        _retrovisor retrovisor;
 };
 
+/*************************************************************************/
+class _cuerpo_delantero: public _triangulos3D
+{
+public:
+       _cuerpo_delantero();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       //Valores
+       float largo1, alto1, ancho1;
+       float largo2, alto2, ancho2;
+       float largo3, alto3, ancho3;
+       
+       protected:
+       _cilindro cilindro;
+       _semicilindro semicilindro;
+       _cubo cubo;
+};
+
+/*************************************************************************/
+class _faro_delantero: public _triangulos3D
+{
+public:
+       _faro_delantero();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       //Valores
+       float largo1, alto1, ancho1;
+       float radio_f1, ancho_f1, altura_f1;
+       float radio_f2, ancho_f2, altura_f2;
+       
+       protected:
+       _cilindro cilindro;
+       _semicilindro semicilindro;
+       _cubo cubo;
+};
+
+/*************************************************************************/
 class _descapotable: public _triangulos3D
 {
 public:
@@ -295,13 +335,18 @@ public:
        float largo_rueda, alto_rueda, ancho_rueda;
        float largo_pos_rueda, ancho_pos_rueda_del, ancho_pos_rueda_tra;
        float largo_puerta, alto_puerta, ancho_puerta;
+       float largo_faro_d, alto_faro_d, ancho_faro_d;
        float ancho_pos_puerta, alto_pos_puerta;
+       float alto_pos_cuerpo_d;
+       float alto_pos_faro_d;
        protected:
        _chasis chasis;
        _rueda rueda;
        _carroceria_lateral carroceria_lateral;
        _puerta puerta;
        _rotacion rotacion;
+       _cuerpo_delantero cuerpo_delantero;
+       _faro_delantero faro_delantero;
        
 };
 

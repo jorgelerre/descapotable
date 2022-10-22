@@ -37,7 +37,9 @@ _extrusion *extrusion;
 _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
 _descapotable esfera;
+//_cuerpo_delantero esfera;
 //_chasis esfera;
+//_faro_delantero esfera;
 _rotacion_ply rotacion_ply;
 // _objeto_ply *ply;
 

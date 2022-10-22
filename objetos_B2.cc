@@ -702,10 +702,6 @@ colors_random();
 //************************************************************************
 
 //************************************************************************
-// piezas
-//************************************************************************
-
-//************************************************************************
 // pala -> Aqui la llamaremos semicilindro
 //************************************************************************
 
@@ -801,9 +797,10 @@ _chasis::_chasis(){
     poligono.push_back(aux);
     extrusion = new  _extrusion(poligono, 0, alto5, -ancho5, true, true);
     
-    //cubo.asignar_color(0.5,0.5,0.5);
-    cubo.colors_random();
-    extrusion->colors_random();
+    cubo.asignar_color(0.5,0.5,0.5);
+    extrusion->asignar_color(0.5,0.5,0.5);
+    //cubo.colors_random();
+    //extrusion->colors_random();
     
     
 }
@@ -855,6 +852,7 @@ void _chasis::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 // guardabarros delantero
 //************************************************************************
+
 _guardabarros::_guardabarros(){
     largo = 0.75;
     alto = 1; //alto = radio
@@ -911,6 +909,7 @@ void _guardabarros::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 // carroceria lateral
 //************************************************************************
+
 _carroceria_lateral::_carroceria_lateral(){
     largo1 = 0.5;           alto1 = 0.75;         ancho1 = 3;               altura1 = 1;
     largo2 = 0.5;           alto2 = altura1;      ancho2 = 0.25;
@@ -1161,7 +1160,87 @@ void _puerta::draw(_modo modo, float r, float g, float b, float grosor){
     glPopMatrix();
 }
 
+//************************************************************************
+// cuerpo delantero
+//************************************************************************
+_cuerpo_delantero::_cuerpo_delantero(){
+    largo1 = 3, alto1 = 0.5, ancho1 = 3.25;
+    largo2 = 3, alto2 = 0.5, ancho2 = 3.25;
+}
 
+
+void _cuerpo_delantero::draw(_modo modo, float r, float g, float b, float grosor){
+    //Pieza 2 - Caja del motor
+    glTranslatef(0, 0, ancho1/2);
+    glPushMatrix();
+        //glTranslatef(0, 0, -ancho1/2);
+        glScalef(largo2, alto2, ancho2);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 1 - Capó trasero
+    glPushMatrix();
+        glTranslatef(0, alto2, 0);
+        glScalef(largo1, alto1, ancho1);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
+//************************************************************************
+// faro delantero
+//************************************************************************
+_faro_delantero::_faro_delantero(){
+    largo1 = 0.5;       alto1 = 0.5;           ancho1 = 0.25;
+    radio_f1 = 0.4;     ancho_f1 = 0.05;       altura_f1 = 0.7;
+    radio_f2 = 0.3;     ancho_f2 = ancho_f1;   altura_f2 = 0.25;
+}
+
+
+void _faro_delantero::draw(_modo modo, float r, float g, float b, float grosor){
+    glScalef(0.95, 0.95, 1);
+    glTranslatef(0, 0, ancho1/2);
+    //Pieza 5 - Luces inferiores
+    glPushMatrix();
+        glTranslatef(0, altura_f2, ancho_f2/2 + ancho1/2);
+        glScalef(radio_f2, radio_f2, ancho_f2);
+        glTranslatef(0, 0, -0.5);
+        glRotatef(90, 1, 0, 0);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 4 - Luces superiores
+    glPushMatrix();
+        glTranslatef(0, altura_f1, ancho_f1/2 + ancho1/2);
+        glScalef(radio_f1, radio_f1, ancho_f1);
+        glTranslatef(0, 0, -0.5);
+        glRotatef(90, 1, 0, 0);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 3 - Parte inferior
+    glPushMatrix();
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo1, alto1, ancho1);
+        glRotatef(180, 1, 0, 0);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 2 - Parte media
+    glTranslatef(0, alto1/2, 0);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 1 - Parte superior
+    glPushMatrix();
+        glTranslatef(0, alto1, 0);
+        glScalef(largo1, alto1, ancho1);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
+//************************************************************************
+// descapotable (objeto final)
+//************************************************************************
 _descapotable::_descapotable(){
     //Variables giros
     giro_dir_ruedas = 20;  //Giros = [-22, 22]
@@ -1174,15 +1253,34 @@ _descapotable::_descapotable(){
     largo_chasis = 4;       alto_chasis = 0.1;      ancho_chasis = 11;
     largo_cl = 0.5;         alto_cl = 3.25;         ancho_cl = 11;
     largo_rueda = 0.3;      alto_rueda = 1.6;       ancho_rueda = 1.6;
-    largo_puerta = 0.25;    alto_puerta = 1.5;      ancho_rueda = 2.25;
-                            alto_pos_puerta = 0.25 + alto_chasis; ancho_pos_puerta = 7.5;
-    largo_pos_rueda = 0.5;       
-    ancho_pos_rueda_del = 9.25;
-    ancho_pos_rueda_tra = 3;
+    largo_pos_rueda = 0.5;                          ancho_pos_rueda_del = 9.25;
+                                                    ancho_pos_rueda_tra = 3;
+    largo_puerta = 0.25;    alto_puerta = 1.5;      ancho_puerta = 2.25;
+    
+    largo_faro_d = 0.5;     alto_faro_d = 1;        ancho_faro_d = 0.5;
+    
+    alto_pos_puerta = 0.25 + alto_chasis;           ancho_pos_puerta = 7.5;
+    alto_pos_cuerpo_d = 1;
+    alto_pos_faro_d = 0.5;
+    
 }
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        //Faros delanteros
+        glPushMatrix();
+            glTranslatef(-largo/2 + largo_faro_d/2, alto_chasis + alto_pos_faro_d, ancho_chasis - ancho_faro_d);
+            faro_delantero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(largo/2 - largo_faro_d/2, alto_chasis + alto_pos_faro_d, ancho_chasis - ancho_faro_d);
+            faro_delantero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Cuerpo delantero
+        glPushMatrix();
+            glTranslatef(0, alto_chasis + alto_pos_cuerpo_d, 7.5);
+            cuerpo_delantero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         //Puertas
         //Puerta derecha
         glPushMatrix();
@@ -1242,14 +1340,6 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         chasis.draw(modo, r, g, b, grosor);
     glPopMatrix();
 }
-
-
-
-
-
-
-
-
 
 
 
