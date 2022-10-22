@@ -9,7 +9,7 @@
 
 
 const float AXIS_SIZE=5000;
-const int LADOS_CIRCULO=128;
+const int LADOS_CIRCULO=50;
 typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS} _modo;
 
 //*************************************************************************
@@ -161,6 +161,15 @@ public:
 // práctica 3, objeto jerárquico articulado descapotable
 //************************************************************************
 
+class _semicilindro: public _triangulos3D
+{
+public:
+      _semicilindro(float radio=0.5, float ancho=1.0, int num=LADOS_CIRCULO/2);
+};
+
+
+
+
 //************************************************************************
 // piezas
 //************************************************************************
@@ -224,6 +233,7 @@ public:
        _cilindro cilindro;
        _guardabarros gb;
        _extrusion *pieza10;
+       _semicilindro semicilindro;
 };
 
 class _rueda: public _triangulos3D
@@ -233,15 +243,40 @@ public:
        void draw(_modo modo, float r, float g, float b, float grosor);
        
        //Valores
-       float largo1, alto1, ancho1;
-       float largo2, alto2, ancho2;
-       float largo3, alto3, ancho3;
-       float largo4, alto4, ancho4;
-       float largo5, alto5, ancho5;
-       float largo6, alto6, ancho6;
+       
        
        protected:
        _rotacion rotacion;
+};
+
+class _retrovisor: public _triangulos3D
+{
+public:
+       _retrovisor();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       
+       //Valores
+       float largo1, alto1, ancho1;
+       float largo2, alto2, ancho2;
+       float largo3, alto3, ancho3;
+       
+       protected:
+       _cilindro cilindro;
+};
+
+class _puerta: public _triangulos3D
+{
+public:
+       _puerta();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       
+       //Valores
+       float largo1, alto1, ancho1;
+       float pos_largo_r, pos_alto_r, pos_ancho_r;
+       
+       protected:
+       _cubo cubo;
+       _retrovisor retrovisor;
 };
 
 class _descapotable: public _triangulos3D
@@ -252,18 +287,22 @@ public:
        //Variables giros
        float giro_dir_ruedas;
        float giro_rot_ruedas;
+       float giro_puerta_izq, giro_puerta_der;
        //Valores
        float largo, alto, ancho;
        float largo_cl, alto_cl, ancho_cl;
        float largo_chasis, alto_chasis, ancho_chasis;
        float largo_rueda, alto_rueda, ancho_rueda;
        float largo_pos_rueda, ancho_pos_rueda_del, ancho_pos_rueda_tra;
+       float largo_puerta, alto_puerta, ancho_puerta;
+       float ancho_pos_puerta, alto_pos_puerta;
        protected:
        _chasis chasis;
        _rueda rueda;
        _carroceria_lateral carroceria_lateral;
-       
+       _puerta puerta;
        _rotacion rotacion;
+       
 };
 
 

@@ -705,6 +705,78 @@ colors_random();
 // piezas
 //************************************************************************
 
+//************************************************************************
+// pala -> Aqui la llamaremos semicilindro
+//************************************************************************
+
+_semicilindro::_semicilindro(float radio, float ancho, int num)
+{
+vector<_vertex3f> perfil;
+_vertex3f vertice_aux;
+_vertex3i cara_aux;
+int i, j;
+
+vertice_aux.x=radio; vertice_aux.y=0; vertice_aux.z=-ancho/2.0;
+perfil.push_back(vertice_aux);
+vertice_aux.z=ancho/2.0;
+perfil.push_back(vertice_aux);
+
+// tratamiento de los vértices
+
+for (j=0;j<=num;j++)
+  {for (i=0;i<2;i++)	
+     {
+      vertice_aux.x=perfil[i].x*cos(M_PI*j/(1.0*num))-
+                    perfil[i].y*sin(M_PI*j/(1.0*num));
+      vertice_aux.y=perfil[i].x*sin(M_PI*j/(1.0*num))+
+                    perfil[i].y*cos(M_PI*j/(1.0*num));
+      vertice_aux.z=perfil[i].z;
+      vertices.push_back(vertice_aux);
+     }
+  }
+  
+// tratamiento de las caras 
+
+for (j=0;j<num;j++)
+   {cara_aux._0=j*2;
+    cara_aux._1=(j+1)*2;
+    cara_aux._2=(j+1)*2+1;
+    caras.push_back(cara_aux);
+    
+    cara_aux._0=j*2;
+    cara_aux._1=(j+1)*2+1;
+    cara_aux._2=j*2+1;
+    caras.push_back(cara_aux);
+   }
+   
+// tapa inferior
+vertice_aux.x=0;
+vertice_aux.y=0;
+vertice_aux.z=-ancho/2.0;
+vertices.push_back(vertice_aux); 
+
+for (j=0;j<num;j++)
+   {cara_aux._0=j*2;
+    cara_aux._1=(j+1)*2;
+    cara_aux._2=vertices.size()-1;
+    caras.push_back(cara_aux);
+   }
+  
+// tapa superior
+vertice_aux.x=0;
+vertice_aux.y=0;
+vertice_aux.z=ancho/2.0;
+vertices.push_back(vertice_aux); 
+
+for (j=0;j<num;j++)
+   {cara_aux._0=j*2+1;
+    cara_aux._1=(j+1)*2+1;
+    cara_aux._2=vertices.size()-1;
+    caras.push_back(cara_aux);
+   }
+  
+colors_random();
+}
 
 //************************************************************************
 // chasis
@@ -879,10 +951,9 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         glPopMatrix();
         //Pieza 12 - Parte superior pieza trasera
         glPushMatrix();
-            glTranslatef(0, altura12+alto12/2, -0.001);
+            glTranslatef(0, altura12+alto12/2, ancho12/2);
             glScalef(largo12, alto12, ancho12);
-            glRotatef(90, 1, 0, 0);
-            cilindro.draw(modo, r, g, b, grosor);
+            semicilindro.draw(modo, r, g, b, grosor);
         glPopMatrix();
 
         //Pieza 11 - Parte lateral pre-final
@@ -907,7 +978,6 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         glPopMatrix();
         
         //Pieza 9 - Parte trasera a la rueda trasera
-        
         glPushMatrix();
             glTranslatef(largo9/2-largo8, 0, ancho8/2);
             glScalef(largo9, alto9, ancho9);
@@ -974,11 +1044,17 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
             glScalef(largo2, alto2, ancho2);
             cubo.draw(modo, r, g, b, grosor);
         glPopMatrix();
-        //Pieza 1 - Parte lateral superior
+        //Pieza 1.5 - Cobertura parte baja pieza 1
         glPushMatrix();
             glTranslatef(0, altura1, ancho1/2);
-            glScalef(largo1, alto1, ancho1);
+            glScalef(largo1, alto1/2, ancho1);
             cubo.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Pieza 1 - Parte lateral superior
+        glPushMatrix();
+            glTranslatef(0, altura1+alto1/2, ancho1/2);
+            glScalef(largo1, alto1, ancho1);
+            semicilindro.draw(modo, r, g, b, grosor);
         glPopMatrix();
     glPopMatrix();
 }
@@ -989,6 +1065,8 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
 //************************************************************************
 
 _rueda::_rueda(){
+    //CAMBIAR VALORES "MAGICOS" POR VARIABLES
+    
     vector<_vertex3f> perfil;
     _vertex3f aux;
     aux.x = 0; aux.y = 0; aux.z = 0;
@@ -1027,16 +1105,77 @@ void _rueda::draw(_modo modo, float r, float g, float b, float grosor){
     glPopMatrix();
 }
 
+//************************************************************************
+// retrovisor
+//************************************************************************
+
+_retrovisor::_retrovisor(){
+    largo1 = 0.25, alto1 = 0.2, ancho1 = 0.05;
+    largo2 = 0.2, alto2 = 0.02, ancho2 = 0.02;
+    
+}
+
+
+void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
+    //Pieza 2 - Brazo pegado a puerta
+    glPushMatrix();
+        glRotatef(30, 0, 0, 1);
+        glTranslatef(-largo2/2+0.02, 0, 0);
+        glScalef(largo2, alto2, ancho2);
+        glTranslatef(-0.5, 0, 0);   //Centramos el cilindro
+        glRotatef(90, 0, 0, -1);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 1 - Espejo retrovisor
+    glTranslatef(largo1/2, 0, 0);
+    glRotatef(10, 0, 1, 0);
+    glScalef(largo1, alto1, ancho1);
+    glTranslatef(0, 0, -0.5);   //Centramos el cilindro
+    glRotatef(90, 1, 0, 0);
+    cilindro.draw(modo, r, g, b, grosor);
+}
+
+
+//************************************************************************
+// puerta
+//************************************************************************
+
+_puerta::_puerta(){
+    largo1 = 0.25, alto1 = 1.5, ancho1 = 2.25;
+    pos_largo_r = largo1/2 + 0.125, pos_alto_r = alto1+0.05, pos_ancho_r = -ancho1*2/11;
+}
+
+
+void _puerta::draw(_modo modo, float r, float g, float b, float grosor){
+    //Pieza 2 - Retrovisor
+    glPushMatrix();
+        glTranslatef(pos_largo_r, pos_alto_r, pos_ancho_r);
+        retrovisor.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 1 - Cuerpo de la puerta
+    glPushMatrix();
+        glTranslatef(0, 0, -ancho1/2);
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
 
 _descapotable::_descapotable(){
     //Variables giros
     giro_dir_ruedas = 20;  //Giros = [-22, 22]
-    giro_rot_ruedas = 0;  //Giros = [-inf, +inf]
+    giro_rot_ruedas = 0;   //Giros = [-inf, +inf]
+    giro_puerta_izq = 25;  //Giros = [0, 70]
+    giro_puerta_der = 70;  //Giros = [0, 70]
+    
     //Valores
     largo = 4;              alto = 3.25;            ancho = 11;
     largo_chasis = 4;       alto_chasis = 0.1;      ancho_chasis = 11;
     largo_cl = 0.5;         alto_cl = 3.25;         ancho_cl = 11;
     largo_rueda = 0.3;      alto_rueda = 1.6;       ancho_rueda = 1.6;
+    largo_puerta = 0.25;    alto_puerta = 1.5;      ancho_rueda = 2.25;
+                            alto_pos_puerta = 0.25 + alto_chasis; ancho_pos_puerta = 7.5;
     largo_pos_rueda = 0.5;       
     ancho_pos_rueda_del = 9.25;
     ancho_pos_rueda_tra = 3;
@@ -1044,7 +1183,20 @@ _descapotable::_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
-       
+        //Puertas
+        //Puerta derecha
+        glPushMatrix();
+            glTranslatef(largo_puerta/2 - largo_chasis/2, alto_pos_puerta, ancho_pos_puerta);
+            glRotatef(giro_puerta_der, 0, 1, 0);
+            glScalef(-1, 1, 1);
+            puerta.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Puerta izquierda
+        glPushMatrix();
+            glTranslatef(largo_chasis/2 - largo_puerta/2, alto_pos_puerta, ancho_pos_puerta);
+            glRotatef(giro_puerta_izq, 0, -1, 0);
+            puerta.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         
         //Ruedas
         //Rueda delantera izquierda
