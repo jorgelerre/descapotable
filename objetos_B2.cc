@@ -664,8 +664,8 @@ if(tapa_in){
     for(int i = 0; i < num_aux-2; i++){
         if(v3 != v1 && v3 != v2){   //Si k no coincide con i/j
             cara_aux._0 = v1;
-            cara_aux._1 = v2;     
-            cara_aux._2 = v3;
+            cara_aux._1 = v3;     
+            cara_aux._2 = v2;
             caras.push_back(cara_aux);            
         }
         else{
@@ -685,8 +685,8 @@ if(tapa_su){
     for(int i = 0; i < num_aux-2; i++){
         if(v3 != v1 && v3 != v2){   //Si k no coincide con i/j
             cara_aux._0 = v1;
-            cara_aux._1 = v3;     
-            cara_aux._2 = v2;
+            cara_aux._1 = v2;     
+            cara_aux._2 = v3;
             caras.push_back(cara_aux);  
         }
         else{
@@ -1426,7 +1426,7 @@ void _parachoques_delantero::draw(_modo modo, float r, float g, float b, float g
 // maletero
 //************************************************************************
 _maletero::_maletero(float _angulo_puerta){
-    angulo_puerta = 45;
+    angulo_puerta = _angulo_puerta;
     largo1 = 3;                         alto1 = 1.025;            ancho1 = 0.25;
     largo2 = 3;                         alto2 = 0.25;             ancho2 = 2.5;
     largo3 = 3;                         alto3 = 0.25;             ancho3 = ancho1 + ancho2;
@@ -1499,13 +1499,42 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
 // Cuerpo trasero
 //************************************************************************
 _cuerpo_trasero::_cuerpo_trasero(){
-    largo1 = 3;     alto1 = 1.025;      ancho1 = 0.25;
-    largo2 = 3;     alto2 = 0.25;       ancho2 = 2.5;
+    largo1 = 3;     alto1 = 0.5;        ancho1 = 1;
+    largo2 = 3;     alto2 = 0.75;       ancho2 = 0.25;
+    largo3 = 3;     alto3 = 1.75;        ancho3 = 0.25;
+    vector<_vertex3f> poligono;
+    _vertex3f aux;
+    aux.x = -largo2 / 2; aux.y = 0; aux.z = ancho2;
+    poligono.push_back(aux);
+    aux.x = -largo2 / 2; aux.y = 0; aux.z = 0;
+    poligono.push_back(aux);
+    aux.x = -largo2 / 2; aux.y = alto1; aux.z = 0;
+    poligono.push_back(aux);
+    aux.x = -largo2 / 2; aux.y = alto2; aux.z = ancho2;
+    poligono.push_back(aux);
+    pieza2 = new  _extrusion(poligono, largo2, 0, 0, true, true);
 }
 
 
 void _cuerpo_trasero::draw(_modo modo, float r, float g, float b, float grosor){
-
+    //Pieza 3 - Pieza anterior a compartimento interior
+    
+    glPushMatrix();
+        glTranslatef(0, 0, ancho3/2);
+        glScalef(largo3, alto3, ancho3);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 2 - Subida diagonal
+    glTranslatef(0, 1, -ancho2);
+    pieza2->draw(modo, r, g, b, grosor);
+    
+    //Pieza 1 - Parte trasera
+    glTranslatef(0, 0, -ancho1/2);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
 }
 //************************************************************************
 // descapotable (objeto final)
@@ -1538,6 +1567,11 @@ _descapotable::_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        //Cuerpo trasero
+        glPushMatrix();
+            glTranslatef(0, alto_chasis, 4);
+            cuerpo_trasero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         //Maletero
         glPushMatrix();
             glTranslatef(0, alto_chasis_trasero, 0);

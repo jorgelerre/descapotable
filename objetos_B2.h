@@ -402,14 +402,15 @@ public:
 class _cuerpo_trasero: public  _triangulos3D
 {
 public:
-    _cuerpo_trasero(float _angulo_puerta = 0);
+    _cuerpo_trasero();
     void draw(_modo modo, float r, float g, float b, float grosor);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
-    
+    float largo3, alto3, ancho3;
     protected:
     _cubo cubo;
+    _extrusion* pieza2;
 }; 
 /*************************************************************************/
 class _descapotable: public _triangulos3D
@@ -444,7 +445,7 @@ public:
        _morro morro;
        _parachoques_delantero parachoques_delantero;
        _maletero maletero;
-       
+       _cuerpo_trasero cuerpo_trasero;
 };
 
 

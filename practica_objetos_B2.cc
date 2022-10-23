@@ -39,7 +39,7 @@ _cono cono(0.75, 1);
 _descapotable esfera;
 //_maletero esfera;
 //_parachoques_delantero esfera;
-//_cuerpo_delantero esfera;
+//_cuerpo_trasero esfera;
 //_chasis esfera;
 //_faro_delantero esfera;
 //_morro esfera;
