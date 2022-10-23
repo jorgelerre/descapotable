@@ -1540,12 +1540,17 @@ void _cuerpo_trasero::draw(_modo modo, float r, float g, float b, float grosor){
 // descapotable (objeto final)
 //************************************************************************
 _descapotable::_descapotable(){
+    
+    
     //Variables giros
     giro_dir_ruedas = 20;  //Giros = [-22, 22]
     giro_rot_ruedas = 0;   //Giros = [-inf, +inf]
     giro_puerta_izq = 70;  //Giros = [0, 70]
     giro_puerta_der = 0;  //Giros = [0, 70]
-    giro_puerta_maletero = 0;
+    giro_puerta_maletero = 30;
+    
+    //Inicializaciones
+    maletero = new _maletero(giro_puerta_maletero);
     
     //Valores
     largo = 4;              alto = 3.25;            ancho = 11;
@@ -1575,7 +1580,7 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         //Maletero
         glPushMatrix();
             glTranslatef(0, alto_chasis_trasero, 0);
-            maletero.draw(modo, r, g, b, grosor);
+            maletero->draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Parachoques delantero
         glPushMatrix();

@@ -444,7 +444,7 @@ public:
        _faro_delantero faro_delantero;
        _morro morro;
        _parachoques_delantero parachoques_delantero;
-       _maletero maletero;
+       _maletero* maletero;
        _cuerpo_trasero cuerpo_trasero;
 };
 
