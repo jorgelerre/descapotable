@@ -324,6 +324,38 @@ public:
 };
 
 /*************************************************************************/
+class _luz_antiniebla: public _triangulos3D
+{
+public:
+       _luz_antiniebla();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       //Valores
+       float largo1, alto1, ancho1;
+       float largo2, alto2, ancho2;
+       protected:
+       _semicilindro semicilindro;
+       _cubo cubo;
+};
+/*************************************************************************/
+class _morro: public _triangulos3D
+{
+public:
+       _morro();
+       void draw(_modo modo, float r, float g, float b, float grosor);
+       //Valores
+       float largo1, alto1, ancho1;
+       float largo2, radio2, separacion2;
+       float largo5, alto5, ancho5;
+       float radio_f2, ancho_f2, altura_f2;
+       float largo_pos_antiniebla, alto_pos_antiniebla, ancho_pos_antiniebla;
+       protected:
+       _cilindro cilindro;
+       _semicilindro semicilindro;
+       _cubo cubo;
+       _luz_antiniebla luz_antiniebla;
+};
+
+/*************************************************************************/
 class _descapotable: public _triangulos3D
 {
 public:
@@ -342,7 +374,7 @@ public:
        float largo_puerta, alto_puerta, ancho_puerta;
        float largo_faro_d, alto_faro_d, ancho_faro_d;
        float ancho_pos_puerta, alto_pos_puerta;
-       float alto_pos_cuerpo_d;
+       float alto_pos_cuerpo_d, ancho_pos_cuerpo_d;
        float alto_pos_faro_d;
        protected:
        _chasis chasis;
@@ -352,6 +384,7 @@ public:
        _rotacion rotacion;
        _cuerpo_delantero cuerpo_delantero;
        _faro_delantero faro_delantero;
+       _morro morro;
        
 };
 

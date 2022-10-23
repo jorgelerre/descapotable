@@ -40,6 +40,8 @@ _descapotable esfera;
 //_cuerpo_delantero esfera;
 //_chasis esfera;
 //_faro_delantero esfera;
+//_morro esfera;
+//_luz_antiniebla esfera;
 _rotacion_ply rotacion_ply;
 // _objeto_ply *ply;
 

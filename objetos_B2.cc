@@ -784,7 +784,7 @@ colors_random();
 //************************************************************************
 
 _chasis::_chasis(){
-    largo1 = 4;       alto1 = 0.10;    ancho1 = 0.75;
+    largo1 = 4;       alto1 = 0.10;    ancho1 = 0.5;
     largo2 = 2.5;     alto2 = 0.10;    ancho2 = 2.25;
     largo3 = 4;       alto3 = 0.10;    ancho3 = 4;
     largo4 = 2.5;     alto4 = 0.10;    ancho4 = 2;
@@ -1170,7 +1170,7 @@ void _puerta::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 _cuerpo_delantero::_cuerpo_delantero(){
     largo1 = 1, alto1 = 1, ancho1 = 0.05;
-    largo2 = 3, alto2 = 0.5, ancho2 = 3.25;
+    largo2 = 3, alto2 = 0.5, ancho2 = 3;
     escalaY = 0.4641;
     ancho2_escalado = 0.4483*2;
     alto2_escalado = 0.28;
@@ -1193,7 +1193,7 @@ void _cuerpo_delantero::draw(_modo modo, float r, float g, float b, float grosor
     
     //Pieza 1 - Capó + parabrisas
     glPushMatrix();
-        glTranslatef(0, alto3, 0);
+        glTranslatef(0, alto3, 0.25/2);
         glScalef(largo2, alto2/alto2_escalado, ancho2/ancho2_escalado);
         glRotatef(15, 1, 0, 0);
         glScalef(1, escalaY, 1);    //Queremos que la parte de delante este tumbada
@@ -1260,14 +1260,113 @@ void _faro_delantero::draw(_modo modo, float r, float g, float b, float grosor){
 }
 
 //************************************************************************
+// luz antiniebla
+//************************************************************************
+_luz_antiniebla::_luz_antiniebla(){
+    largo1 = 0.25;      alto1 = 0.25;       ancho1 = 0.25;
+    largo2 = 0.5;       alto2 = 0.25;       ancho2 = 0.25;
+}
+
+
+void _luz_antiniebla::draw(_modo modo, float r, float g, float b, float grosor){
+    glTranslatef(largo2, 0, 0);  //Centramos el objeto
+    
+    //Parte 4 - Lateral derecha
+    glPushMatrix();
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo1, alto1, ancho1);
+        glRotatef(90, 0, 0, -1);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Parte 3 - Centro - derecha
+    glTranslatef(-largo2/2, 0, 0);
+    glPushMatrix();
+        glScalef(largo2, alto2, ancho2);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Parte 2 - Centro - izquierda
+    glTranslatef(-largo2, 0, 0);
+    
+    glPushMatrix();
+        glScalef(largo2, alto2, ancho2);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Parte 1 - Lateral izquierdo
+    glTranslatef(-largo2/2, alto1/2, 0);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        glRotatef(90, 0, 0, 1);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+}
+
+//************************************************************************
+// morro
+//************************************************************************
+_morro::_morro(){
+    largo1 = 3;      alto1 = 1;       ancho1 = 0.05;
+    largo2 = 3;      radio2 = 0.05;
+    largo5 = 3;      alto5 = 0.25;    ancho5 = 0.15;
+    largo_pos_antiniebla = 1.3;    alto_pos_antiniebla = 0.25; ancho_pos_antiniebla =0;
+    separacion2 = 0.1;
+}
+
+
+void _morro::draw(_modo modo, float r, float g, float b, float grosor){
+    
+    glPushMatrix();
+        //Pieza 5 - Bigotera
+        glPushMatrix();
+            glTranslatef(0, alto1, ancho1 + radio2 + ancho5/2);
+            glScalef(largo5, alto5, ancho5);
+            cubo.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        
+        //Pieza 4 - Luces antiniebla - derecha
+        glPushMatrix();
+            glTranslatef(-largo_pos_antiniebla, alto_pos_antiniebla, ancho1 + radio2);
+            luz_antiniebla.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Pieza 3 - Luces antiniebla - izquierda
+        glPushMatrix();
+            glTranslatef(largo_pos_antiniebla, alto_pos_antiniebla, ancho1 + radio2);
+            luz_antiniebla.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Pieza 2 - Barras parrilla
+        glPushMatrix();
+            glTranslatef(0, -radio2, 0);
+            for(int i = 1; i < alto1/separacion2; i++){
+                glTranslatef(0, separacion2, 0);
+                glPushMatrix();
+                glTranslatef(0, 0, ancho1/2);
+                glScalef(largo2, radio2, radio2);
+                glRotatef(45, 1, 0, 0);
+                cubo.draw(modo, r, g, b, grosor);
+                
+                glPopMatrix();
+                
+            }
+        glPopMatrix();
+        //Pieza 1 - Parte trasera de la parrilla
+        //glTranslatef
+        glPushMatrix();
+            glScalef(largo1, alto1, ancho1);
+            cubo.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+    glPopMatrix();
+}
+//************************************************************************
 // descapotable (objeto final)
 //************************************************************************
 _descapotable::_descapotable(){
     //Variables giros
     giro_dir_ruedas = 20;  //Giros = [-22, 22]
     giro_rot_ruedas = 0;   //Giros = [-inf, +inf]
-    giro_puerta_izq = 25;  //Giros = [0, 70]
-    giro_puerta_der = 70;  //Giros = [0, 70]
+    giro_puerta_izq = 0;  //Giros = [0, 70]
+    giro_puerta_der = 0;  //Giros = [0, 70]
     
     //Valores
     largo = 4;              alto = 3.25;            ancho = 11;
@@ -1281,13 +1380,19 @@ _descapotable::_descapotable(){
     largo_faro_d = 0.5;     alto_faro_d = 1;        ancho_faro_d = 0.5;
     
     alto_pos_puerta = 0.25 + alto_chasis;           ancho_pos_puerta = 7.5;
-    alto_pos_cuerpo_d = 1;
+    alto_pos_cuerpo_d = 1;                          ancho_pos_cuerpo_d = 7.5;
     alto_pos_faro_d = 0.5;
     
 }
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+    
+        //Morro
+        glPushMatrix();
+            glTranslatef(0, alto_chasis, ancho_chasis -0.5);
+            morro.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         //Faros delanteros
         glPushMatrix();
             glTranslatef(-largo/2 + largo_faro_d/2, alto_chasis + alto_pos_faro_d, ancho_chasis - ancho_faro_d);
@@ -1299,7 +1404,7 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         glPopMatrix();
         //Cuerpo delantero
         glPushMatrix();
-            glTranslatef(0, alto_chasis + alto_pos_cuerpo_d, 7.5);
+            glTranslatef(0, alto_chasis + alto_pos_cuerpo_d, ancho_pos_cuerpo_d);
             cuerpo_delantero.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Puertas
