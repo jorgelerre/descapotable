@@ -1358,6 +1358,48 @@ void _morro::draw(_modo modo, float r, float g, float b, float grosor){
         glPopMatrix();
     glPopMatrix();
 }
+
+_parachoques_delantero::_parachoques_delantero(){
+    largo1 = 0.25;      alto1 = 0.5;       ancho1 = 0.75;
+    largo2 = 2.05;       alto2 = 0.5;       ancho2 = 0.25;
+}
+
+void _parachoques_delantero::draw(_modo modo, float r, float g, float b, float grosor){
+    
+    glTranslatef(-2, -0.25, 0);
+    //Pieza 4 - Parte frontal derecha
+    glPushMatrix();
+        glRotatef(5, 0, -1, 0);
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo2, alto2, ancho2);
+        glRotatef(90, 0, 0, -1);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 3 - Parte lateral derecha
+    
+    glPushMatrix();
+        glTranslatef(0, 0, ancho2/2-ancho1/2);
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+        
+    //Pieza 2 - Parte frontal izquierda
+    glTranslatef(4, 0, 0);
+    glPushMatrix();
+        glRotatef(5, 0, 1, 0);
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo2, alto2, ancho2);
+        glRotatef(90, 0, 0, 1);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 1 - Parte lateral izquierda
+    glTranslatef(0, 0, ancho2/2-ancho1/2);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
 //************************************************************************
 // descapotable (objeto final)
 //************************************************************************
@@ -1387,7 +1429,11 @@ _descapotable::_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
-    
+        //Parachoques delantero
+        glPushMatrix();
+            glTranslatef(0, 0, ancho_chasis -0.25);
+            parachoques_delantero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         //Morro
         glPushMatrix();
             glTranslatef(0, alto_chasis, ancho_chasis -0.5);

@@ -299,7 +299,6 @@ public:
        float largo3, alto3, ancho3;
        
        protected:
-       _cilindro cilindro;
        _semicilindro semicilindro;
        _cubo parabrisas;
        _cubo cubo;
@@ -336,6 +335,7 @@ public:
        _semicilindro semicilindro;
        _cubo cubo;
 };
+
 /*************************************************************************/
 class _morro: public _triangulos3D
 {
@@ -354,6 +354,22 @@ public:
        _cubo cubo;
        _luz_antiniebla luz_antiniebla;
 };
+
+/*************************************************************************/
+class _parachoques_delantero: public _triangulos3D
+{
+public:
+    _parachoques_delantero();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    
+    protected:
+    _cilindro cilindro;
+    _cubo cubo;
+};
+    
 
 /*************************************************************************/
 class _descapotable: public _triangulos3D
@@ -385,6 +401,7 @@ public:
        _cuerpo_delantero cuerpo_delantero;
        _faro_delantero faro_delantero;
        _morro morro;
+       _parachoques_delantero parachoques_delantero;
        
 };
 
