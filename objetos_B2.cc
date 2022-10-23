@@ -84,26 +84,28 @@ void _triangulos3D::draw_solido(float r, float g, float b)
 void _triangulos3D::draw_solido_colores( )
 {
 	unsigned int i;
-	float r, g, b;
+	float r, g, b, a;
 	glPolygonMode(GL_FRONT,GL_FILL);
 	
 	glBegin(GL_TRIANGLES);
 	for (i=0;i<caras.size();i++){
 		if(colores.size() > i){
-		    glColor3f(colores[i].r,colores[i].g,colores[i].b);
+		    glColor4f(colores[i].r,colores[i].g,colores[i].b,colores[i].a);
 		}
 		else{
 		    if(i % 2 == 0){
 		        r = 1;
 		        g = 0;
 		        b = 0;
+		        a = 1;
 		    }
 		    else{
 		        r = 1;
 		        g = 1;
 		        b = 0;
+		        a = 1;
 		    }
-		    glColor3f(r,g,b);
+		    glColor4f(r,g,b,a);
 		}
 		glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
 		glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
@@ -141,12 +143,13 @@ for (i=0;i<n_c;i++)
   {colores[i].r=rand()%1000/1000.0;
    colores[i].g=rand()%1000/1000.0;
    colores[i].b=rand()%1000/1000.0;
+   colores[i].a=1;
   }
 }
 
 //*************************************************************************
 
-void _triangulos3D::colors_chess(float r1, float g1, float b1, float r2, float g2, float b2)
+void _triangulos3D::colors_chess(float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2)
 {
 int i, n_c;
 n_c=caras.size();
@@ -156,6 +159,7 @@ for (i=0;i<n_c;i++)
      {colores[i].r=r1;
       colores[i].g=g1;
       colores[i].b=b1;
+      colores[i].a=a1;
      }
    else 
      {colores[i].r=r2;
@@ -167,7 +171,7 @@ for (i=0;i<n_c;i++)
 
 //*************************************************************************
 
-void _triangulos3D::asignar_color(float r, float g, float b)
+void _triangulos3D::asignar_color(float r, float g, float b, float a)
 {
 int i, n_c;
 n_c=caras.size();
@@ -176,6 +180,7 @@ for (i=0;i<n_c;i++)
   {colores[i].r=r;
    colores[i].g=g;
    colores[i].b=b;
+   colores[i].a=a;
   }
 }
 
@@ -797,8 +802,8 @@ _chasis::_chasis(){
     poligono.push_back(aux);
     extrusion = new  _extrusion(poligono, 0, alto5, -ancho5, true, true);
     
-    cubo.asignar_color(0.5,0.5,0.5);
-    extrusion->asignar_color(0.5,0.5,0.5);
+    cubo.asignar_color(0.5,0.5,0.5,1.0);
+    extrusion->asignar_color(0.5,0.5,0.5,1.0);
     //cubo.colors_random();
     //extrusion->colors_random();
     
@@ -1164,24 +1169,39 @@ void _puerta::draw(_modo modo, float r, float g, float b, float grosor){
 // cuerpo delantero
 //************************************************************************
 _cuerpo_delantero::_cuerpo_delantero(){
-    largo1 = 3, alto1 = 0.5, ancho1 = 3.25;
+    largo1 = 1, alto1 = 1, ancho1 = 0.05;
     largo2 = 3, alto2 = 0.5, ancho2 = 3.25;
+    escalaY = 0.4641;
+    ancho2_escalado = 0.4483*2;
+    alto2_escalado = 0.28;
+    largo3 = 3, alto3 = 0.5, ancho3 = 3.25;
+    
+    //Colores
+    parabrisas.asignar_color(0.5, 0.5, 1, 0.4);
 }
 
 
 void _cuerpo_delantero::draw(_modo modo, float r, float g, float b, float grosor){
     //Pieza 2 - Caja del motor
-    glTranslatef(0, 0, ancho1/2);
+    
+    glTranslatef(0, 0, ancho2/2);
     glPushMatrix();
-        //glTranslatef(0, 0, -ancho1/2);
-        glScalef(largo2, alto2, ancho2);
+        //glTranslatef(0, 0, -ancho2/2);
+        glScalef(largo3, alto3, ancho3);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
-    //Pieza 1 - Capó trasero
+    
+    //Pieza 1 - Capó + parabrisas
     glPushMatrix();
-        glTranslatef(0, alto2, 0);
-        glScalef(largo1, alto1, ancho1);
+        glTranslatef(0, alto3, 0);
+        glScalef(largo2, alto2/alto2_escalado, ancho2/ancho2_escalado);
+        glRotatef(15, 1, 0, 0);
+        glScalef(1, escalaY, 1);    //Queremos que la parte de delante este tumbada
+        glRotatef(30, -1, 0, 0);
         semicilindro.draw(modo, r, g, b, grosor);
+        glTranslatef(0, 0, -0.5);
+        glScalef(largo1, alto1, ancho1);
+        parabrisas.draw(modo, r, g, b, grosor);   //Parabrisas
     glPopMatrix();
 }
 
@@ -1223,6 +1243,7 @@ void _faro_delantero::draw(_modo modo, float r, float g, float b, float grosor){
         glRotatef(180, 1, 0, 0);
         semicilindro.draw(modo, r, g, b, grosor);
     glPopMatrix();
+    
     //Pieza 2 - Parte media
     glTranslatef(0, alto1/2, 0);
     glPushMatrix();

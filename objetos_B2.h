@@ -19,6 +19,7 @@ struct _color{
 	float r;
 	float g;
 	float b;
+	float a;
 };
 
 class _puntos3D
@@ -48,8 +49,8 @@ void 	draw(_modo modo, float r, float g, float b, float grosor);
 
 /* asignación de colores */
 void 	colors_random();
-void 	colors_chess(float r1, float g1, float b1, float r2, float g2, float b2);
-void    asignar_color(float r, float g, float b);
+void 	colors_chess(float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2);
+void    asignar_color(float r, float g, float b, float a);
 
 vector<_vertex3i> caras;
 vector<_color> colores;
@@ -292,13 +293,17 @@ public:
        void draw(_modo modo, float r, float g, float b, float grosor);
        //Valores
        float largo1, alto1, ancho1;
+       float escalaY;
+       float alto2_escalado, ancho2_escalado;
        float largo2, alto2, ancho2;
        float largo3, alto3, ancho3;
        
        protected:
        _cilindro cilindro;
        _semicilindro semicilindro;
+       _cubo parabrisas;
        _cubo cubo;
+       
 };
 
 /*************************************************************************/

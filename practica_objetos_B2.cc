@@ -312,7 +312,7 @@ glutInit(&argc, argv);
 // GLUT_RGBA -> memoria de imagen con componentes rojo, verde, azul y alfa para cada pixel
 // GLUT_DEPTH -> memoria de profundidad o z-bufer
 // GLUT_STENCIL -> memoria de estarcido_rotation Rotation;
-glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
 // posicion de la esquina inferior izquierdad de la ventana
 glutInitWindowPosition(Window_x,Window_y);
@@ -323,7 +323,8 @@ glutInitWindowSize(Window_width,Window_high);
 // llamada para crear la ventana, indicando el titulo (no se visualiza hasta que se llama
 // al bucle de eventos)
 glutCreateWindow("PRACTICA - 2");
-
+//Comandos para activar colores translucidos
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); glEnable( GL_BLEND );  glClearColor(0.0,0.0,0.0,0.0);
 // asignación de la funcion llamada "dibujar" al evento de dibujo
 glutDisplayFunc(draw);
 // asignación de la funcion llamada "change_window_size" al evento correspondiente
