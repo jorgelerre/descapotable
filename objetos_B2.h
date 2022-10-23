@@ -161,14 +161,23 @@ public:
 //************************************************************************
 // práctica 3, objeto jerárquico articulado descapotable
 //************************************************************************
-
+//************************************************************************
+// semicilindro
+//************************************************************************
 class _semicilindro: public _triangulos3D
 {
 public:
       _semicilindro(float radio=0.5, float ancho=1.0, int num=LADOS_CIRCULO/2);
 };
 
-
+//************************************************************************
+// semiesfera
+//************************************************************************
+class _semiesfera: public _rotacion
+{
+public:
+    _semiesfera(float radio=1.0, int num1=12, int num2=12);
+};
 
 
 //************************************************************************
@@ -369,8 +378,39 @@ public:
     _cilindro cilindro;
     _cubo cubo;
 };
-    
 
+/*************************************************************************/
+class _maletero: public  _triangulos3D
+{
+public:
+    _maletero(float _angulo_puerta = 0);
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float largo3, alto3, ancho3;
+    float largo4, alto4, ancho4;
+    float largo5, alto5, ancho5;
+    float largo6, alto6, ancho6;
+    float angulo_puerta;
+    
+    protected:
+    _cubo cubo;
+};   
+
+/*************************************************************************/
+class _cuerpo_trasero: public  _triangulos3D
+{
+public:
+    _cuerpo_trasero(float _angulo_puerta = 0);
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    
+    protected:
+    _cubo cubo;
+}; 
 /*************************************************************************/
 class _descapotable: public _triangulos3D
 {
@@ -381,10 +421,11 @@ public:
        float giro_dir_ruedas;
        float giro_rot_ruedas;
        float giro_puerta_izq, giro_puerta_der;
+       float giro_puerta_maletero;
        //Valores
        float largo, alto, ancho;
        float largo_cl, alto_cl, ancho_cl;
-       float largo_chasis, alto_chasis, ancho_chasis;
+       float largo_chasis, alto_chasis, alto_chasis_trasero, ancho_chasis;
        float largo_rueda, alto_rueda, ancho_rueda;
        float largo_pos_rueda, ancho_pos_rueda_del, ancho_pos_rueda_tra;
        float largo_puerta, alto_puerta, ancho_puerta;
@@ -402,6 +443,7 @@ public:
        _faro_delantero faro_delantero;
        _morro morro;
        _parachoques_delantero parachoques_delantero;
+       _maletero maletero;
        
 };
 
