@@ -380,6 +380,36 @@ public:
 };
 
 /*************************************************************************/
+class _luz_trasera: public _triangulos3D
+{
+public:
+    _luz_trasera();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float radio1, ancho1;
+    float radio2, ancho2;
+    
+    protected:
+    _cilindro cilindro;
+    _semiesfera semiesfera;
+};
+
+/*************************************************************************/
+class _parachoques_trasero: public _triangulos3D
+{
+public:
+    _parachoques_trasero();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    
+    protected:
+    _cilindro cilindro;
+    _cubo cubo;
+};
+
+/*************************************************************************/
 class _maletero: public  _triangulos3D
 {
 public:
@@ -431,9 +461,12 @@ public:
        float largo_pos_rueda, ancho_pos_rueda_del, ancho_pos_rueda_tra;
        float largo_puerta, alto_puerta, ancho_puerta;
        float largo_faro_d, alto_faro_d, ancho_faro_d;
+       float largo_luz_t, ancho_luz_t;
        float ancho_pos_puerta, alto_pos_puerta;
        float alto_pos_cuerpo_d, ancho_pos_cuerpo_d;
-       float alto_pos_faro_d;
+       float alto_pos_faro_d, alto_pos_luz_t;
+       float ancho_pos_cuerpo_t;
+       float ancho_pos_parachoques_t;
        protected:
        _chasis chasis;
        _rueda rueda;
@@ -444,8 +477,11 @@ public:
        _faro_delantero faro_delantero;
        _morro morro;
        _parachoques_delantero parachoques_delantero;
+       _luz_trasera luz_trasera;
+       _parachoques_trasero parachoques_trasero;
        _maletero* maletero;
        _cuerpo_trasero cuerpo_trasero;
+       
 };
 
 

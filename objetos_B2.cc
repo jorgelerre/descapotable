@@ -1421,6 +1421,73 @@ void _parachoques_delantero::draw(_modo modo, float r, float g, float b, float g
     glPopMatrix();
 }
 
+//************************************************************************
+// luces traseras
+//************************************************************************
+_luz_trasera::_luz_trasera(){
+    radio1 = 0.5;  ancho1 = 0.15;
+    radio2 = 0.45; ancho2 = 0.15;
+}
+
+void _luz_trasera::draw(_modo modo, float r, float g, float b, float grosor){
+    //Pieza 2 - Faro
+    glPushMatrix();
+        glScalef(radio2/2, radio2/2, ancho2);
+        glRotatef(90, 1, 0, 0);
+        semiesfera.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 1 - Base
+    glPushMatrix();
+        glTranslatef(0, 0, -ancho1);
+        glScalef(radio1, radio1, ancho1);
+        glRotatef(90, 1, 0, 0);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
+//************************************************************************
+// parachoques trasero
+//************************************************************************
+_parachoques_trasero::_parachoques_trasero(){
+    largo1 = 0.25;        alto1 = 0.25;       ancho1 = 1.15;
+    largo2 = 2.14;        alto2 = 0.25;       ancho2 = 0.25;
+}
+
+void _parachoques_trasero::draw(_modo modo, float r, float g, float b, float grosor){
+    glRotatef(180, 0, 1, 0);
+    glTranslatef(-2.125, 0, -ancho2/2); //Centrar el objeto
+    //Pieza 4 - Parte frontal derecha
+    glPushMatrix();
+        glRotatef(5, 0, -1, 0);
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo2, alto2, ancho2);
+        glRotatef(90, 0, 0, -1);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 3 - Parte lateral derecha
+    glPushMatrix();
+        glTranslatef(0, 0, ancho2/2-ancho1/2);
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+        
+    //Pieza 2 - Parte frontal izquierda
+    glTranslatef(4.25, 0, 0);
+    glPushMatrix();
+        glRotatef(5, 0, 1, 0);
+        glTranslatef(0, alto1/2, 0);
+        glScalef(largo2, alto2, ancho2);
+        glRotatef(90, 0, 0, 1);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 1 - Parte lateral izquierda
+    glTranslatef(0, 0, ancho2/2-ancho1/2);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
 
 //************************************************************************
 // maletero
@@ -1563,18 +1630,39 @@ _descapotable::_descapotable(){
     largo_puerta = 0.25;    alto_puerta = 1.5;      ancho_puerta = 2.25;
     
     largo_faro_d = 0.5;     alto_faro_d = 1;        ancho_faro_d = 0.5;
-    
+    largo_luz_t  = 0.5;                             ancho_luz_t  = 0.25;
     alto_pos_puerta = 0.25 + alto_chasis;           ancho_pos_puerta = 7.5;
     alto_pos_cuerpo_d = 1;                          ancho_pos_cuerpo_d = 7.5;
+                                                    ancho_pos_cuerpo_t = 4;
     alto_pos_faro_d = 0.5;
-    
+    alto_pos_luz_t = 1.5;
+    ancho_pos_parachoques_t = -0.15;
 }
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        //Parachoques trasero
+        glPushMatrix();
+            glTranslatef(0, alto_chasis_trasero/2, -0.15);
+            parachoques_trasero.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Luces traseras
+        //Luz trasera superior derecha
+        glPushMatrix();
+            glTranslatef(-largo/2 + largo_luz_t/2, alto_chasis + alto_pos_luz_t, ancho_luz_t/2);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Luz trasera superior izquierda
+        glPushMatrix();
+            glTranslatef(largo/2 - largo_luz_t/2, alto_chasis + alto_pos_luz_t, ancho_luz_t/2);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        
         //Cuerpo trasero
         glPushMatrix();
-            glTranslatef(0, alto_chasis, 4);
+            glTranslatef(0, alto_chasis, ancho_pos_cuerpo_t);
             cuerpo_trasero.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Maletero
