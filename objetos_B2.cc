@@ -1603,6 +1603,60 @@ void _cuerpo_trasero::draw(_modo modo, float r, float g, float b, float grosor){
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
 }
+
+//************************************************************************
+// Asiento trasero
+//************************************************************************
+_asiento_trasero::_asiento_trasero(){
+    largo1 = 3;     alto1 = 0.5;                ancho1 = 0.75;
+    largo2 = 3;     alto2 = 0.25;               ancho2 = 0.25;
+    largo3 = 3;     alto3 = 0.25;               ancho3 = 0.75;
+    largo4 = 3;     alto4 = sqrt(10)/4 - ancho4;  ancho4 = 0.25;
+    
+}
+
+void _asiento_trasero::draw(_modo modo, float r, float g, float b, float grosor){
+    //Respaldo
+    glPushMatrix();
+        glTranslatef(0, 0, -0.1);
+        glRotatef(30, -1, 0, 0);
+        //Pieza 4.2 - Respaldo central
+        glPushMatrix();
+            glScalef(largo4, alto4, ancho4);
+            cubo.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Pieza 4.1 - Respaldo alto
+        glTranslatef(0, alto4, 0);
+        glPushMatrix();
+            glScalef(largo4, ancho4, ancho4);
+            semicilindro.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+    glPopMatrix();
+    
+    //Parte 3 - Parte central asiento
+    glPushMatrix();
+        //glTranslatef(0, -alto1 - alto2/2, -ancho1/2);
+        glScalef(largo3, alto3, ancho3);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    glTranslatef(0, alto2/2, ancho3/2);
+    //Parte 2 - Parte delantera asiento
+    glPushMatrix();
+        glScalef(largo2, alto2, ancho2);
+        glRotatef(90, 1, 0, 0);
+        glRotatef(90, 0, 1, 0);
+        semicilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Parte 1 - Soporte / Base
+    glPushMatrix();
+        glTranslatef(0, -alto1 - alto2/2, -ancho1/2);
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+}
+
 //************************************************************************
 // descapotable (objeto final)
 //************************************************************************

@@ -441,8 +441,26 @@ public:
     protected:
     _cubo cubo;
     _extrusion* pieza2;
-}; 
+};
+
 /*************************************************************************/
+class _asiento_trasero: public  _triangulos3D
+{
+public:
+    _asiento_trasero();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float largo3, alto3, ancho3;
+    float largo4, alto4, ancho4;
+    protected:
+    _cubo cubo;
+    _semicilindro semicilindro;
+};
+/*************************************************************************/
+
+
 class _descapotable: public _triangulos3D
 {
 public:
