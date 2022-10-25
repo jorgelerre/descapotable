@@ -38,7 +38,7 @@ _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
 
 
-//_descapotable esfera;
+_descapotable esfera;
 //_maletero esfera;
 //_parachoques_trasero esfera;
 //_cuerpo_trasero esfera;
@@ -47,8 +47,8 @@ _cono cono(0.75, 1);
 //_morro esfera;
 //_luz_trasera esfera;
 //_luz_antiniebla esfera;
-_asiento_trasero esfera;
-
+//_asiento esfera;
+//_volante esfera;
 
 _rotacion_ply rotacion_ply;
 

@@ -444,10 +444,10 @@ public:
 };
 
 /*************************************************************************/
-class _asiento_trasero: public  _triangulos3D
+class _asiento: public  _triangulos3D
 {
 public:
-    _asiento_trasero();
+    _asiento();
     void draw(_modo modo, float r, float g, float b, float grosor);
     //Valores
     float largo1, alto1, ancho1;
@@ -459,18 +459,34 @@ public:
     _semicilindro semicilindro;
 };
 /*************************************************************************/
+class _volante: public  _triangulos3D
+{
+public:
+    _volante();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float radio;
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float largo3, alto3, ancho3;
+    float largo4, alto4, ancho4;
+    protected:
+    _cilindro cilindro;
+};
 
-
+/*************************************************************************/
 class _descapotable: public _triangulos3D
 {
 public:
        _descapotable();
+       ~_descapotable();
        void draw(_modo modo, float r, float g, float b, float grosor);
        //Variables giros
        float giro_dir_ruedas;
        float giro_rot_ruedas;
        float giro_puerta_izq, giro_puerta_der;
        float giro_puerta_maletero;
+       float giro_volante;
        //Valores
        float largo, alto, ancho;
        float largo_cl, alto_cl, ancho_cl;
@@ -485,12 +501,15 @@ public:
        float alto_pos_faro_d, alto_pos_luz_t;
        float ancho_pos_cuerpo_t;
        float ancho_pos_parachoques_t;
+       float largo_asiento_t, ancho_pos_asiento_t;
+       float largo_pos_asiento_d, ancho_pos_asiento_d;
+       float inclinacion_volante, alto_pos_volante;
        protected:
        _chasis chasis;
        _rueda rueda;
        _carroceria_lateral carroceria_lateral;
        _puerta puerta;
-       _rotacion rotacion;
+       //_rotacion rotacion;
        _cuerpo_delantero cuerpo_delantero;
        _faro_delantero faro_delantero;
        _morro morro;
@@ -499,6 +518,8 @@ public:
        _parachoques_trasero parachoques_trasero;
        _maletero* maletero;
        _cuerpo_trasero cuerpo_trasero;
+       _asiento asiento;
+       _volante volante;
        
 };
 
