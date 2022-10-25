@@ -1776,7 +1776,40 @@ void _reposapies::draw(_modo modo, float r, float g, float b, float grosor){
     glPopMatrix();
 }
 
+//************************************************************************
+// techo
+//************************************************************************
+_techo::_techo(){
+    coef = 1;
+    largo1 = 3.01;           alto1 = 0.125;          ancho1 = 1.25*coef;
+    largo2 = 3.01;           alto2 = 0.125;          ancho2 = 1*coef;
+    largo3 = 3;           alto3 = 0.125;          ancho3 = 1.4577*coef;
+    alpha = 30.964;
+}
 
+void _techo::draw(_modo modo, float r, float g, float b, float grosor){
+    //Pieza 3 - 
+    glPushMatrix();
+        glTranslatef(0, alto3, 0);
+        glRotatef(90-alpha, -1, 0, 0);
+        glTranslatef(0, -alto3, -ancho3/2);
+        glScalef(largo3, alto3, ancho3);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 2 - 
+    glTranslatef(0, 0, ancho2/2);
+    glPushMatrix();
+        glScalef(largo2, alto2, ancho2);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 1 - 
+    glTranslatef(0, 0, ancho1/2 + ancho2/2);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
 
 
 //************************************************************************
@@ -1823,6 +1856,14 @@ _descapotable::_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        glTranslatef(0,0,-ancho/2);
+        
+        //Techo
+        glPushMatrix();
+            glTranslatef(0, alto_chasis/2 + 2.25 + 0.125, 4.25);
+            techo.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        
         //Reposapies
         glPushMatrix();
             glTranslatef(0, alto_chasis/2, ancho_pos_reposapies);

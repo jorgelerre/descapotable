@@ -51,6 +51,8 @@ _descapotable esfera;
 //_volante esfera;
 //_palanca_cambios esfera;
 //_reposapies esfera;
+//_techo esfera;
+
 _rotacion_ply rotacion_ply;
 
 

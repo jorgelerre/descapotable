@@ -510,6 +510,24 @@ public:
 };
 
 /*************************************************************************/
+class _techo: public  _triangulos3D
+{
+public:
+    _techo();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float coef, alpha;
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float largo3, alto3, ancho3;
+    float radio4;
+    protected:
+    _cubo cubo;
+    _extrusion* pieza2;
+    
+};
+
+/*************************************************************************/
 class _descapotable: public _triangulos3D
 {
 public:
@@ -558,6 +576,7 @@ public:
        _volante volante;
        _palanca_cambios palanca_cambios;
        _reposapies reposapies;
+       _techo techo;
 };
 
 
