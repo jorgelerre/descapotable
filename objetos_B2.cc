@@ -1703,7 +1703,7 @@ void _volante::draw(_modo modo, float r, float g, float b, float grosor){
 // palanca de cambios
 //************************************************************************
 _palanca_cambios::_palanca_cambios(){
-    largo1 = 0.9;       alto1 = 1;        ancho1 = 1.5;
+    largo1 = 0.9;       alto1 = 1;          ancho1 = 1.5;
     largo2 = 0.5;       alto2 = 0.05;       ancho2 = 0.5;
     radio3 = 0.03;      alto3 = 0.3;
     radio4 = 0.1;
@@ -1744,6 +1744,38 @@ void _palanca_cambios::draw(_modo modo, float r, float g, float b, float grosor)
 //************************************************************************
 // reposapies
 //************************************************************************
+_reposapies::_reposapies(){
+    largo1 = 3;           alto1 = 1.25;          ancho1 = 0.25;
+    largo2 = 3;           alto2 = 0.3;           ancho2 = 0.3;
+    vector<_vertex3f> poligono;
+    _vertex3f aux;
+    aux.x = -largo2 / 2; aux.y = 0; aux.z = 0;
+    poligono.push_back(aux);
+    aux.x = -largo2 / 2; aux.y = 0; aux.z = ancho2;
+    poligono.push_back(aux);
+    aux.x = -largo2 / 2; aux.y = alto2; aux.z = 0;
+    poligono.push_back(aux);
+    pieza2 = new  _extrusion(poligono, largo2, 0, 0, true, true);
+}
+
+_reposapies::~_reposapies(){
+    delete pieza2;
+}
+
+void _reposapies::draw(_modo modo, float r, float g, float b, float grosor){
+    glRotatef(180, 0, 1, 0);
+    //Pieza 2 - Reposapies
+    glPushMatrix();
+        pieza2->draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    //Pieza 1 - Fondo
+    glTranslatef(0, 0, -ancho1/2);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
 
 
 
@@ -1786,16 +1818,22 @@ _descapotable::_descapotable(){
     ancho_pos_asiento_t = 5.5;
     largo_pos_asiento_d = 1;    ancho_pos_asiento_d = 7;
     inclinacion_volante = 15;   alto_pos_volante = 1.4;
+    ancho_pos_reposapies = 7.74;
 }
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        //Reposapies
+        glPushMatrix();
+            glTranslatef(0, alto_chasis/2, ancho_pos_reposapies);
+            reposapies.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        
         //Palanca de cambios
         glPushMatrix();
             glTranslatef(0, alto_chasis/2, ancho_pos_asiento_d);
             palanca_cambios.draw(modo, r, g, b, grosor);
         glPopMatrix();
-        
         
         //Volante
         glPushMatrix();

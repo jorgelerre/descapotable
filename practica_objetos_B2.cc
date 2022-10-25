@@ -50,6 +50,7 @@ _descapotable esfera;
 //_asiento esfera;
 //_volante esfera;
 //_palanca_cambios esfera;
+//_reposapies esfera;
 _rotacion_ply rotacion_ply;
 
 

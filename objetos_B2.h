@@ -489,6 +489,26 @@ public:
     _cilindro cilindro;
     _esfera esfera;
 };
+
+/*************************************************************************/
+class _reposapies: public  _triangulos3D
+{
+public:
+    _reposapies();
+    ~_reposapies();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float radio;
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float radio3, alto3;
+    float radio4;
+    protected:
+    _cubo cubo;
+    _extrusion* pieza2;
+    
+};
+
 /*************************************************************************/
 class _descapotable: public _triangulos3D
 {
@@ -519,6 +539,7 @@ public:
        float largo_asiento_t, ancho_pos_asiento_t;
        float largo_pos_asiento_d, ancho_pos_asiento_d;
        float inclinacion_volante, alto_pos_volante;
+       float ancho_pos_reposapies;
        protected:
        _chasis chasis;
        _rueda rueda;
@@ -536,6 +557,7 @@ public:
        _asiento asiento;
        _volante volante;
        _palanca_cambios palanca_cambios;
+       _reposapies reposapies;
 };
 
 
