@@ -144,7 +144,7 @@ public:
 class _esfera: public _rotacion
 {
 public:
-       _esfera(float radio);
+       _esfera(float radio = 0.5);
 };
 
 
@@ -468,12 +468,27 @@ public:
     float radio;
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
-    float largo3, alto3, ancho3;
-    float largo4, alto4, ancho4;
+    float largo3;
     protected:
     _cilindro cilindro;
 };
-
+/*************************************************************************/
+class _palanca_cambios: public  _triangulos3D
+{
+public:
+    _palanca_cambios();
+    void draw(_modo modo, float r, float g, float b, float grosor);
+    //Valores
+    float radio;
+    float largo1, alto1, ancho1;
+    float largo2, alto2, ancho2;
+    float radio3, alto3;
+    float radio4;
+    protected:
+    _cubo cubo;
+    _cilindro cilindro;
+    _esfera esfera;
+};
 /*************************************************************************/
 class _descapotable: public _triangulos3D
 {
@@ -520,7 +535,7 @@ public:
        _cuerpo_trasero cuerpo_trasero;
        _asiento asiento;
        _volante volante;
-       
+       _palanca_cambios palanca_cambios;
 };
 
 

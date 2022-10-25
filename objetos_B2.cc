@@ -1684,8 +1684,6 @@ void _volante::draw(_modo modo, float r, float g, float b, float grosor){
         glPopMatrix();
     }
     
-    
-    
     //Parte 1 - Parte exterior
     float angulo = (360/ LADOS_CIRCULO);
     for(int i = 0; i <= LADOS_CIRCULO +1; i++){
@@ -1700,6 +1698,54 @@ void _volante::draw(_modo modo, float r, float g, float b, float grosor){
     
     
 }
+
+//************************************************************************
+// palanca de cambios
+//************************************************************************
+_palanca_cambios::_palanca_cambios(){
+    largo1 = 0.9;       alto1 = 1;        ancho1 = 1.5;
+    largo2 = 0.5;       alto2 = 0.05;       ancho2 = 0.5;
+    radio3 = 0.03;      alto3 = 0.3;
+    radio4 = 0.1;
+}
+
+void _palanca_cambios::draw(_modo modo, float r, float g, float b, float grosor){
+    glTranslatef(0, alto1 + alto2 + alto3 + radio4/3, 0);   //Ponemos el objeto apoyado 
+                                                            //en el suelo
+    
+    //Pieza 4 - Parte superior palanca cambios
+    glPushMatrix();
+        glScalef(radio4*2, radio4*2, radio4*2);
+        esfera.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 3 - Mango palanca cambios
+    glTranslatef(0, -alto3 - radio4/3, 0);
+    glPushMatrix();
+        glScalef(radio3*2, alto3, radio3*2);
+        cilindro.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 2 - Base palanca cambios
+    glTranslatef(0, -alto2, 0);
+    glPushMatrix();
+        glScalef(largo2, alto2, ancho2);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    //Pieza 1 - Compartimento central
+    glTranslatef(0, -alto1, 0);
+    glPushMatrix();
+        glScalef(largo1, alto1, ancho1);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+}
+
+//************************************************************************
+// reposapies
+//************************************************************************
+
+
 
 //************************************************************************
 // descapotable (objeto final)
@@ -1739,11 +1785,18 @@ _descapotable::_descapotable(){
     largo_asiento_t = 3;
     ancho_pos_asiento_t = 5.5;
     largo_pos_asiento_d = 1;    ancho_pos_asiento_d = 7;
-    inclinacion_volante = 15;   alto_pos_volante = 1.5;
+    inclinacion_volante = 15;   alto_pos_volante = 1.4;
 }
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        //Palanca de cambios
+        glPushMatrix();
+            glTranslatef(0, alto_chasis/2, ancho_pos_asiento_d);
+            palanca_cambios.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        
+        
         //Volante
         glPushMatrix();
             glTranslatef(largo_pos_asiento_d, alto_chasis_trasero/2 + alto_pos_volante, ancho_pos_asiento_d);

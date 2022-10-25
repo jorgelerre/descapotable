@@ -49,7 +49,7 @@ _descapotable esfera;
 //_luz_antiniebla esfera;
 //_asiento esfera;
 //_volante esfera;
-
+//_palanca_cambios esfera;
 _rotacion_ply rotacion_ply;
 
 
