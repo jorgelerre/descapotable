@@ -1566,9 +1566,9 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
 // Cuerpo trasero
 //************************************************************************
 _cuerpo_trasero::_cuerpo_trasero(){
-    largo1 = 3;     alto1 = 0.5;        ancho1 = 1;
-    largo2 = 3;     alto2 = 0.75;       ancho2 = 0.25;
-    largo3 = 3;     alto3 = 1.75;        ancho3 = 0.25;
+    largo1 = 3;         alto1 = 0.5;         ancho1 = 1;
+    largo2 = 3;         alto2 = 0.75;        ancho2 = 0.25;
+    largo3 = 3;         alto3 = 1.75;        ancho3 = 0.25;
     vector<_vertex3f> poligono;
     _vertex3f aux;
     aux.x = -largo2 / 2; aux.y = 0; aux.z = ancho2;
@@ -1585,7 +1585,6 @@ _cuerpo_trasero::_cuerpo_trasero(){
 
 void _cuerpo_trasero::draw(_modo modo, float r, float g, float b, float grosor){
     //Pieza 3 - Pieza anterior a compartimento interior
-    
     glPushMatrix();
         glTranslatef(0, 0, ancho3/2);
         glScalef(largo3, alto3, ancho3);
@@ -1779,55 +1778,77 @@ void _reposapies::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 // techo
 //************************************************************************
-_techo::_techo(){
-    coef = 1;
-    largo1 = 3.01;           alto1 = 0.125;          ancho1 = 1.25*coef;
-    largo2 = 3.01;           alto2 = 0.125;          ancho2 = 1*coef;
-    largo3 = 3;           alto3 = 0.125;          ancho3 = 1.4577*coef;
-    alpha = 30.964;
+_techo::_techo(float _coeficiente){
+    coef = _coeficiente;
+    altura_pos = 0.9;
+    anchura_pos = 0.7;
+    alpha = (180/M_PI)*atan(anchura_pos/altura_pos);
+    cout << alpha << endl;
+    giro1 = coef*180;        //Min = 0    Max = 180
+    giro2 = coef*(90 + alpha);         //Min = 0    Max = 90 + alpha
+    giro3 = coef*(90 + alpha); //Min = 0    Max = 90 + alpha
+    largo1 = 3.01;           alto1 = 0.125;          ancho1 = 1.25 - 0.5*coef;
+    largo2 = 3.01;           alto2 = 0.125;          ancho2 = 1 - 0.25*coef;
+    largo3 = 3;              alto3 = 0.125;          
+    ancho3 = sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos);
+    ancho3 -= (sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos)-0.75)*coef;
+    cout << "Ancho 3 = " << ancho3 << endl;
+    cout << ancho3*cos(alpha) << " " << ancho3*sin(alpha) << endl;
+    cout << cos(M_PI) << endl;
 }
 
 void _techo::draw(_modo modo, float r, float g, float b, float grosor){
-    //Pieza 3 - 
+    
+    //Pieza 3 - Parte trasera
+    
+    //glTranslatef(0, alto3, 0);
+    glRotatef(giro3, -1, 0, 0);
+    glTranslatef(0, ancho3*cos(alpha*M_PI/180), ancho3*sin(alpha*M_PI/180));
     glPushMatrix();
-        glTranslatef(0, alto3, 0);
-        glRotatef(90-alpha, -1, 0, 0);
-        glTranslatef(0, -alto3, -ancho3/2);
+        glRotatef(90.0-alpha, -1, 0, 0);
+        glTranslatef(0, 0, -ancho3/2);
         glScalef(largo3, alto3, ancho3);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
-    //Pieza 2 - 
-    glTranslatef(0, 0, ancho2/2);
+    
+    //Pieza 2 - Parte superior trasera
+    glRotatef(giro2, 1, 0, 0);
+    glTranslatef(0, alto2, ancho2);
     glPushMatrix();
+        glTranslatef(0, -alto2, -ancho2/2);
         glScalef(largo2, alto2, ancho2);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
-    //Pieza 1 - 
-    glTranslatef(0, 0, ancho1/2 + ancho2/2);
+    //Pieza 1 - Parte superior delantera
+    //glTranslatef(0, 0, ancho1/2 + ancho2/2);
     glPushMatrix();
+        glRotatef(giro1, -1, 0, 0);
+        glTranslatef(0, -alto1, ancho1/2);
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
+    
 }
 
 
 //************************************************************************
 // descapotable (objeto final)
 //************************************************************************
-_descapotable::_descapotable(){
-    
+_descapotable::_descapotable(float _gdr, float _grr, float _gpi, float _gpd, float _gpm, float _coef_t){
     
     //Variables giros
-    giro_dir_ruedas = 20;  //Giros = [-22, 22]
-    giro_rot_ruedas = 0;   //Giros = [-inf, +inf]
-    giro_puerta_izq = 70;  //Giros = [0, 70]
-    giro_puerta_der = 70;  //Giros = [0, 70]
-    giro_puerta_maletero = 30;
-    giro_volante = 20;
+    giro_dir_ruedas = _gdr;  //Giros = [-22, 22]
+    giro_volante = _gdr*10;  //Giros = [-220, 220]
+    giro_rot_ruedas = _grr;     //Giros = [-inf, +inf]
+    giro_puerta_izq = _gpi;    //Giros = [0, 70]
+    giro_puerta_der = _gpd;    //Giros = [0, 70]
+    giro_puerta_maletero = _gpm;
+    coeficiente_techo = _coef_t;    //Coeficiente = [0 (cerrado), 1(abierto)]
     
     //Inicializaciones
     maletero = new _maletero(giro_puerta_maletero);
+    techo = new _techo(coeficiente_techo);
     
     //Valores
     largo = 4;              alto = 3.25;            ancho = 11;
@@ -1852,16 +1873,25 @@ _descapotable::_descapotable(){
     largo_pos_asiento_d = 1;    ancho_pos_asiento_d = 7;
     inclinacion_volante = 15;   alto_pos_volante = 1.4;
     ancho_pos_reposapies = 7.74;
+    alto_pos_techo = 1.5;
+    ancho_pos_techo = 3.5;
 }
+
+_descapotable::~_descapotable(){
+    delete maletero;
+    delete techo;
+}
+
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        glScalef(0.5, 0.5, 0.5);
         glTranslatef(0,0,-ancho/2);
         
         //Techo
         glPushMatrix();
-            glTranslatef(0, alto_chasis/2 + 2.25 + 0.125, 4.25);
-            techo.draw(modo, r, g, b, grosor);
+            glTranslatef(0, alto_chasis/2 + alto_pos_techo, ancho_pos_techo);
+            techo->draw(modo, r, g, b, grosor);
         glPopMatrix();
         
         //Reposapies
@@ -2016,8 +2046,5 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     glPopMatrix();
 }
 
-_descapotable::~_descapotable(){
-    delete maletero;
-}
 
 

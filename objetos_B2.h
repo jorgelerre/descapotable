@@ -513,10 +513,12 @@ public:
 class _techo: public  _triangulos3D
 {
 public:
-    _techo();
+    _techo(float _coeficiente = 0);
     void draw(_modo modo, float r, float g, float b, float grosor);
     //Valores
     float coef, alpha;
+    float altura_pos, anchura_pos;
+    float giro1, giro2, giro3;
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
     float largo3, alto3, ancho3;
@@ -531,7 +533,7 @@ public:
 class _descapotable: public _triangulos3D
 {
 public:
-       _descapotable();
+       _descapotable(float _gdr = 0, float _grr = 0, float _gpi = 0, float _gpd = 0, float _gpm = 0, float _coef_t = 0);
        ~_descapotable();
        void draw(_modo modo, float r, float g, float b, float grosor);
        //Variables giros
@@ -540,6 +542,7 @@ public:
        float giro_puerta_izq, giro_puerta_der;
        float giro_puerta_maletero;
        float giro_volante;
+       float coeficiente_techo;
        //Valores
        float largo, alto, ancho;
        float largo_cl, alto_cl, ancho_cl;
@@ -558,6 +561,7 @@ public:
        float largo_pos_asiento_d, ancho_pos_asiento_d;
        float inclinacion_volante, alto_pos_volante;
        float ancho_pos_reposapies;
+       float alto_pos_techo, ancho_pos_techo;
        protected:
        _chasis chasis;
        _rueda rueda;
@@ -576,7 +580,7 @@ public:
        _volante volante;
        _palanca_cambios palanca_cambios;
        _reposapies reposapies;
-       _techo techo;
+       _techo* techo;
 };
 
 

@@ -12,7 +12,7 @@
 using namespace std;
 
 // tipos
-typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CONO, ESFERA, CILINDRO, ROTACION_PLY} _tipo_objeto;
+typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CONO, ESFERA, CILINDRO, ROTACION_PLY, DESCAPOTABLE} _tipo_objeto;
 _tipo_objeto t_objeto=CUBO;
 _modo   modo=POINTS;
 
@@ -36,22 +36,9 @@ _rotacion rotacion;
 _extrusion *extrusion;
 _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
+_esfera esfera;
+_descapotable descapotable;
 
-
-_descapotable esfera;
-//_maletero esfera;
-//_parachoques_trasero esfera;
-//_cuerpo_trasero esfera;
-//_chasis esfera;
-//_faro_delantero esfera;
-//_morro esfera;
-//_luz_trasera esfera;
-//_luz_antiniebla esfera;
-//_asiento esfera;
-//_volante esfera;
-//_palanca_cambios esfera;
-//_reposapies esfera;
-//_techo esfera;
 
 _rotacion_ply rotacion_ply;
 
@@ -141,6 +128,7 @@ switch (t_objeto){
         case ESFERA: esfera.draw(modo,1.0,0.0,0.0,1);break;
         case CILINDRO: cilindro.draw(modo,1.0,0.0,0.0,1);break;
         case ROTACION_PLY: rotacion_ply.draw(modo,1.0,0.6,0.0,5);break;
+        case DESCAPOTABLE: descapotable.draw(modo,1.0,0.6,0.0,5);break;
 	}
 
 }
@@ -207,6 +195,7 @@ switch (toupper(Tecla1)){
         case 'E':t_objeto=ESFERA;break;
         case 'Y':t_objeto=CILINDRO;break;
         case 'Z':t_objeto=ROTACION_PLY;break;
+        case 'D':t_objeto=DESCAPOTABLE;break;
 	}
 glutPostRedisplay();
 }
