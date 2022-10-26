@@ -223,10 +223,11 @@ public:
 class _carroceria_lateral: public _triangulos3D
 {
 public:
-       _carroceria_lateral();
+       _carroceria_lateral(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
        
        //Valores
+       float coef;
        float largo1, alto1, ancho1, altura1;
        float largo2, alto2, ancho2;
        float largo3, alto3, ancho3;
@@ -266,10 +267,11 @@ public:
 class _retrovisor: public _triangulos3D
 {
 public:
-       _retrovisor();
+       _retrovisor(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
        
        //Valores
+       int coef;
        float largo1, alto1, ancho1;
        float largo2, alto2, ancho2;
        float largo3, alto3, ancho3;
@@ -282,16 +284,17 @@ public:
 class _puerta: public _triangulos3D
 {
 public:
-       _puerta();
+       _puerta(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
        
-       //Valores
+       //Valores+
+       int coef;
        float largo1, alto1, ancho1;
        float pos_largo_r, pos_alto_r, pos_ancho_r;
        
        protected:
        _cubo cubo;
-       _retrovisor retrovisor;
+       _retrovisor *retrovisor;
 };
 
 /*************************************************************************/
@@ -565,8 +568,10 @@ public:
        protected:
        _chasis chasis;
        _rueda rueda;
-       _carroceria_lateral carroceria_lateral;
-       _puerta puerta;
+       _carroceria_lateral carroceria_lateral_izq;
+       _carroceria_lateral* carroceria_lateral_der;
+       _puerta puerta_izq;
+       _puerta * puerta_der;
        //_rotacion rotacion;
        _cuerpo_delantero cuerpo_delantero;
        _faro_delantero faro_delantero;

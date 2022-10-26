@@ -37,9 +37,8 @@ _extrusion *extrusion;
 _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
 _esfera esfera;
-_descapotable descapotable;
-
-
+//_descapotable descapotable;
+_puerta descapotable;
 _rotacion_ply rotacion_ply;
 
 

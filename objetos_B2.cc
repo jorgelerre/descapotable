@@ -188,10 +188,6 @@ for (i=0;i<n_c;i++)
 // clase cubo
 //*************************************************************************
 
-//*************************************************************************
-// clase cubo
-//*************************************************************************
-
 _cubo::_cubo(float tam)
 {
 //vertices
@@ -818,7 +814,7 @@ _chasis::_chasis(){
     poligono.push_back(aux);
     aux.x = largo5 / 2; aux.y = alto5; aux.z = 0;
     poligono.push_back(aux);
-    extrusion = new  _extrusion(poligono, 0, alto5, -ancho5, true, true);
+    extrusion = new  _extrusion(poligono, 0, alto5, ancho5, true, true);
     
     cubo.asignar_color(0.5,0.5,0.5,1.0);
     extrusion->asignar_color(0.5,0.5,0.5,1.0);
@@ -831,6 +827,7 @@ _chasis::_chasis(){
 
 void _chasis::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        
         //Pieza 6
         glTranslatef(0, 0, ancho6/2);
         glPushMatrix();
@@ -843,6 +840,7 @@ void _chasis::draw(_modo modo, float r, float g, float b, float grosor){
         
         //Pieza 5
         glPushMatrix();
+            glRotatef(180, 0, 1, 0);
             extrusion->draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Pieza 4
@@ -873,7 +871,7 @@ void _chasis::draw(_modo modo, float r, float g, float b, float grosor){
 }
 
 //************************************************************************
-// guardabarros delantero
+// guardabarros 
 //************************************************************************
 
 _guardabarros::_guardabarros(){
@@ -883,29 +881,29 @@ _guardabarros::_guardabarros(){
     lados_curva = LADOS_CIRCULO / 2;
     float angulo = (M_PI / lados_curva) * 2;
 
-    //Creamos una extrusion por lado de la curva
+    //Creamos una extrusion por cada lado de la curva
     _vertex3f v_anterior;
-    v_anterior.x = largo/2; v_anterior.y = 0; v_anterior.z = alto;
+    v_anterior.x = -largo/2; v_anterior.y = 0; v_anterior.z = alto;
     for(int i = 1; i <= lados_curva / 4; i++){
         vector<_vertex3f> poligono;
         _vertex3f aux;
         _extrusion * arco;
         //Vertice a misma altura que vertice nuevo
-        aux.x = largo / 2;  aux.y = alto*sin(angulo*i); aux.z = ancho/2;
+        aux.x = -largo / 2;  aux.y = alto*sin(angulo*i); aux.z = ancho/2;
         poligono.push_back(aux);
         //Vertice a misma altura que vertice antiguo
-        aux.x = largo / 2;  aux.y = alto*sin(angulo*(i-1)); aux.z = ancho/2;
+        aux.x = -largo / 2;  aux.y = alto*sin(angulo*(i-1)); aux.z = ancho/2;
         poligono.push_back(aux);
         //Vertice de la curva anterior
         poligono.push_back(v_anterior);
         //Vertice nuevo de la curva
-        aux.x = largo / 2;  aux.y = alto*sin(angulo*i); aux.z = alto*cos(angulo*i);
+        aux.x = -largo / 2;  aux.y = alto*sin(angulo*i); aux.z = alto*cos(angulo*i);
         poligono.push_back(aux);
         cout << "aux -> x= "<<aux.x<<"\ty= "<<aux.y<<"\tz= "<<aux.z<<endl;
         cout << "Angulo = " << angulo*i << endl;
         poligono.push_back(aux);
         //Crear extrusion
-        arco = new  _extrusion(poligono, -largo, 0, 0, true, true);
+        arco = new  _extrusion(poligono, largo, 0, 0, true, true);
         curva.push_back(arco);
         arco = NULL;
         //Actualizar v_anterior
@@ -915,12 +913,12 @@ _guardabarros::_guardabarros(){
 
 
 void _guardabarros::draw(_modo modo, float r, float g, float b, float grosor){
-    
+    //glTranslatef(-largo, 0, 0);
     for(int i = 0; i < curva.size(); i++){
         
         glPushMatrix();
             curva[i]->draw(modo, r, g, b, grosor);
-            glScalef(1, 1, -1);
+            glRotatef(180, 0, 1, 0);
             curva[i]->draw(modo, r, g, b, grosor);
         glPopMatrix();    
     }
@@ -933,38 +931,40 @@ void _guardabarros::draw(_modo modo, float r, float g, float b, float grosor){
 // carroceria lateral
 //************************************************************************
 
-_carroceria_lateral::_carroceria_lateral(){
-    largo1 = 0.5;           alto1 = 0.75;         ancho1 = 3;               altura1 = 1;
+_carroceria_lateral::_carroceria_lateral(bool lado_izquierdo){
+    coef = lado_izquierdo ? 0 : 1;
+    largo1 = 0.5;           alto1 = 0.75;         ancho1 = 3;       altura1 = 1;
     largo2 = 0.5;           alto2 = altura1;      ancho2 = 0.25;
     largo3 = 0.75;          alto3 = altura1;      ancho3 = 2.25;
     largo_cil = 0.25;       alto_cil = 0.25;      ancho_cil = 0.25;
     largo4 = 0.25;          alto4 = altura1;      ancho4 = ancho3;
     largo5 = 0.5;           alto5 = altura1;      ancho5 = 0.5;
     largo6 = 0.25;          alto6 = 0.25;         ancho6 = 2.25;
-    largo7 = 0.5;          alto7 = 1;            ancho7 = 1.25;
+    largo7 = 0.5;           alto7 = 1;            ancho7 = 1.25;
     largo8 = 0.75;          alto8 = altura1;      ancho8 = 2;
     largo9 = 0.25;          alto9 = altura1;      ancho9 = ancho8;
     largo10 = largo1;       alto10 = 1;           ancho10 = 1;
     largo11 = largo1;       alto11 = 0.9;         ancho11 = 0.75;   altura11 = 0.1;
-    largo12 = largo1;       alto12 = 0.75;        ancho12 = 5;   altura12 = 1;
+    largo12 = largo1;       alto12 = 0.75;        ancho12 = 5;      altura12 = 1;
     //Extrusion pieza 10
     vector<_vertex3f> poligono;
     _vertex3f aux;
-    aux.x = largo10/2;   aux.y = 0;      aux.z = 0;
+    aux.x = -largo10/2;   aux.y = 0;            aux.z = 0;
     poligono.push_back(aux);
-    aux.x = largo10/2;  aux.y = altura11;   aux.z = -ancho10;
+    aux.x = -largo10/2;   aux.y = altura11;     aux.z = -ancho10;
     poligono.push_back(aux);
-    aux.x = largo10/2;  aux.y = alto10;      aux.z = -ancho10;
+    aux.x = -largo10/2;   aux.y = alto10;       aux.z = -ancho10;
     poligono.push_back(aux);
-    aux.x = largo10/2;   aux.y = alto10;   aux.z = 0;
+    aux.x = -largo10/2;   aux.y = alto10;       aux.z = 0;
     poligono.push_back(aux);
-    pieza10 = new _extrusion(poligono, -largo10, 0, 0, true, true);
+    pieza10 = new _extrusion(poligono, largo10, 0, 0, true, true);
     
     
 }
 
 void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
+        
         //Pieza 12.5 - Cobertura parte baja pieza 12
         glPushMatrix();
             glTranslatef(0, altura12, ancho12/2);
@@ -985,15 +985,15 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
             cubo.draw(modo, r, g, b, grosor);
         glPopMatrix();
         glTranslatef(0, 0, ancho10 + ancho11);
-
+        
         //Pieza 10 - Parte lateral detras de guardabarros trasero
         glPushMatrix();
             pieza10->draw(modo, r, g, b, grosor);
         glPopMatrix();
-   
+        
         //Eje de rueda
         glPushMatrix();
-            glTranslatef(largo1-largo8, 0, ancho8/2);
+            glTranslatef((largo1-largo8)*(1-3*coef), 0, ancho8/2);
             glScalef(largo_cil, alto_cil, ancho_cil);
             glRotatef(90, 0, 0, 1);
             cilindro.draw(modo, r, g, b, grosor);
@@ -1001,7 +1001,7 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         
         //Pieza 9 - Parte trasera a la rueda trasera
         glPushMatrix();
-            glTranslatef(largo9/2-largo8, 0, ancho8/2);
+            glTranslatef((largo9/2-largo8)*(1-2*coef), 0, ancho8/2);
             glScalef(largo9, alto9, ancho9);
             cubo.draw(modo, r, g, b, grosor);
         glPopMatrix();
@@ -1009,12 +1009,12 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
 
         //Pieza 8 - Guardabarros rueda trasera (arco)
         glPushMatrix();
-            glTranslatef(largo1/2-largo8/2, 0, ancho8/2);
+            glTranslatef((largo1/2-largo8/2)*(1-2*coef), 0, ancho8/2);
             glScalef(1, 1, ancho8/ancho3);
             gb.draw(modo, r, g, b, grosor);
         glPopMatrix();
         glTranslatef(0, 0, ancho8);
-
+    
         //Pieza 7 - Carroceria lateral - Parte detras de puerta
         glPushMatrix();
             glTranslatef(0, 0, ancho7/2);
@@ -1025,7 +1025,7 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         
         //Pieza 6 - Parte lateral por debajo de la puerta
         glPushMatrix();
-            glTranslatef(largo6/2, 0, ancho6/2);
+            glTranslatef(largo6/2*(1-2*coef), 0, ancho6/2);
             glScalef(largo6, alto6, ancho6);
             cubo.draw(modo, r, g, b, grosor);
         glPopMatrix();
@@ -1041,7 +1041,8 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         
         //Eje de rueda
         glPushMatrix();
-            glTranslatef(largo1-largo3, 0, ancho1-ancho2-ancho4/2);
+            //1-3? -> El cilindro no está alineado al centro (tam_cilindro = largo1 - largo3)
+            glTranslatef((largo1-largo3)*(1-3*coef), 0, ancho1-ancho2-ancho4/2);    
             glScalef(largo_cil, alto_cil, ancho_cil);
             glRotatef(90, 0, 0, 1);
             cilindro.draw(modo, r, g, b, grosor);
@@ -1049,17 +1050,18 @@ void _carroceria_lateral::draw(_modo modo, float r, float g, float b, float gros
         
         //Pieza 4 - Parte trasera a la rueda
         glPushMatrix();
-            glTranslatef(largo4/2-largo3, 0, ancho1-ancho2-ancho4/2);
+            glTranslatef((largo4/2-largo3)*(1-2*coef), 0, ancho1-ancho2-ancho4/2);
+            glRotatef(coef*180, 0, 1, 0);
             glScalef(largo4, alto4, ancho4);
             cubo.draw(modo, r, g, b, grosor);
         glPopMatrix();
         
         //Pieza 3 - Guardabarros rueda delantera (arco)
         glPushMatrix();
-            glTranslatef(largo1/2-largo3/2, 0, ancho1-ancho2-ancho3/2);
+            glTranslatef((largo1/2-largo3/2)*(1-2*coef), 0, ancho1-ancho2-ancho3/2);
             gb.draw(modo, r, g, b, grosor);
         glPopMatrix();
-
+    
         //Pieza 2 - Parte lateral delantera
         glPushMatrix();
             glTranslatef(0, 0, ancho1 - ancho2/2);
@@ -1131,7 +1133,8 @@ void _rueda::draw(_modo modo, float r, float g, float b, float grosor){
 // retrovisor
 //************************************************************************
 
-_retrovisor::_retrovisor(){
+_retrovisor::_retrovisor(bool lado_izquierdo){
+    coef = lado_izquierdo ? 0 : 1;
     largo1 = 0.25, alto1 = 0.2, ancho1 = 0.05;
     largo2 = 0.2, alto2 = 0.02, ancho2 = 0.02;
     
@@ -1140,9 +1143,10 @@ _retrovisor::_retrovisor(){
 
 void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
     //Pieza 2 - Brazo pegado a puerta
+    
     glPushMatrix();
-        glRotatef(30, 0, 0, 1);
-        glTranslatef(-largo2/2+0.02, 0, 0);
+        glRotatef(30*(1-2*coef), 0, 0, 1);
+        glTranslatef((-largo2/2+0.02)*(1-2*coef), 0, 0);
         glScalef(largo2, alto2, ancho2);
         glTranslatef(-0.5, 0, 0);   //Centramos el cilindro
         glRotatef(90, 0, 0, -1);
@@ -1150,7 +1154,7 @@ void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
     glPopMatrix();
     
     //Pieza 1 - Espejo retrovisor
-    glTranslatef(largo1/2, 0, 0);
+    glTranslatef((largo1/2)*(1-2*coef), 0, 0);
     glRotatef(10, 0, 1, 0);
     glScalef(largo1, alto1, ancho1);
     glTranslatef(0, 0, -0.5);   //Centramos el cilindro
@@ -1163,7 +1167,9 @@ void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
 // puerta
 //************************************************************************
 
-_puerta::_puerta(){
+_puerta::_puerta(bool lado_izquierdo){
+    coef = 1; //coef = lado_izquierdo ? 0 : 1;
+    retrovisor = new _retrovisor(false);
     largo1 = 0.25, alto1 = 1.5, ancho1 = 2.25;
     pos_largo_r = largo1/2 + 0.125, pos_alto_r = alto1+0.05, pos_ancho_r = -ancho1*2/11;
 }
@@ -1172,8 +1178,8 @@ _puerta::_puerta(){
 void _puerta::draw(_modo modo, float r, float g, float b, float grosor){
     //Pieza 2 - Retrovisor
     glPushMatrix();
-        glTranslatef(pos_largo_r, pos_alto_r, pos_ancho_r);
-        retrovisor.draw(modo, r, g, b, grosor);
+        glTranslatef(pos_largo_r*(1-2*coef), pos_alto_r, pos_ancho_r);
+        retrovisor->draw(modo, r, g, b, grosor);
     glPopMatrix();
     //Pieza 1 - Cuerpo de la puerta
     glPushMatrix();
@@ -1497,13 +1503,14 @@ _maletero::_maletero(float _angulo_puerta){
     largo1 = 3;                         alto1 = 1.025;            ancho1 = 0.25;
     largo2 = 3;                         alto2 = 0.25;             ancho2 = 2.5;
     largo3 = 3;                         alto3 = 0.25;             ancho3 = ancho1 + ancho2;
-    largo4 = 0.25;                      alto4 = alto1 - alto2;    ancho4 = 2;
+    largo4 = 0.25;                      alto4 = alto1 - alto2;    ancho4 = 1.5;
     largo5 = largo1-2*largo4-0.0001;    alto5 = alto1 - alto2;    ancho5 = 0.25;
-    largo6 = 0.25;                      alto6= 0.25;              ancho6 = ancho3 - ancho4;
+    largo6 = 0.25;                      alto6= 0.25;              ancho6 = ancho3 - ancho4 - ancho1;
 
 }
 
 void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
+    
     glTranslatef(0, 0, ancho3/2);
     glRotatef(180, 0, 1, 0);
     //Pieza 6.2 - Parte lateral izquierda(sobre el guardabarros trasero)
@@ -1528,13 +1535,13 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
     
     //Pieza 4.2 - Lateral izquierdo maletero
     glPushMatrix();
-        glTranslatef(-largo1/2 + largo4/2, alto3, ancho3/2 - ancho4/2);
+        glTranslatef(-largo1/2 + largo4/2, alto3, ancho3/2 - ancho4/2 - ancho1);
         glScalef(largo4, alto4, ancho4);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
     //Pieza 4.1 - Lateral derecho maletero
     glPushMatrix();
-        glTranslatef(largo1/2 - largo4/2, alto3, ancho3/2 - ancho4/2);
+        glTranslatef(largo1/2 - largo4/2, alto3, ancho3/2 - ancho4/2 - ancho1);
         glScalef(largo4, alto4, ancho4);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
@@ -1849,6 +1856,8 @@ _descapotable::_descapotable(float _gdr, float _grr, float _gpi, float _gpd, flo
     //Inicializaciones
     maletero = new _maletero(giro_puerta_maletero);
     techo = new _techo(coeficiente_techo);
+    carroceria_lateral_der = new _carroceria_lateral(false);
+    puerta_der = new _puerta(false);
     
     //Valores
     largo = 4;              alto = 3.25;            ancho = 11;
@@ -1856,7 +1865,7 @@ _descapotable::_descapotable(float _gdr, float _grr, float _gpi, float _gpd, flo
                             alto_chasis_trasero = 0.2; 
     largo_cl = 0.5;         alto_cl = 3.25;         ancho_cl = 11;
     largo_rueda = 0.3;      alto_rueda = 1.6;       ancho_rueda = 1.6;
-    largo_pos_rueda = 0.5;                          ancho_pos_rueda_del = 9.25;
+    largo_pos_rueda = 0.5;                          ancho_pos_rueda_del = 9.15;
                                                     ancho_pos_rueda_tra = 3;
     largo_puerta = 0.25;    alto_puerta = 1.5;      ancho_puerta = 2.25;
     
@@ -1880,6 +1889,7 @@ _descapotable::_descapotable(float _gdr, float _grr, float _gpi, float _gpd, flo
 _descapotable::~_descapotable(){
     delete maletero;
     delete techo;
+    delete carroceria_lateral_der;
 }
 
 
@@ -1988,54 +1998,54 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
             glTranslatef(largo_puerta/2 - largo_chasis/2, alto_pos_puerta, ancho_pos_puerta);
             glRotatef(giro_puerta_der, 0, 1, 0);
             glScalef(-1, 1, 1);
-            puerta.draw(modo, r, g, b, grosor);
+            puerta_der->draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Puerta izquierda
         glPushMatrix();
             glTranslatef(largo_chasis/2 - largo_puerta/2, alto_pos_puerta, ancho_pos_puerta);
             glRotatef(giro_puerta_izq, 0, -1, 0);
-            puerta.draw(modo, r, g, b, grosor);
+            puerta_izq.draw(modo, r, g, b, grosor);
         glPopMatrix();
         
         //Ruedas
         //Rueda delantera izquierda
         glPushMatrix();
-            glTranslatef(largo_chasis/2-largo_pos_rueda, 0, ancho_pos_rueda_del);
+            glTranslatef(largo_chasis/2-largo_pos_rueda, alto_chasis, ancho_pos_rueda_del);
             glRotatef(giro_dir_ruedas, 0, 1, 0);
             //glRotatef(giro_rot_ruedas, 1, 0, 0);
             rueda.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Rueda trasera izquierda
         glPushMatrix();
-            glTranslatef(largo_chasis/2-largo_pos_rueda, 0, ancho_pos_rueda_tra);
+            glTranslatef(largo_chasis/2-largo_pos_rueda, alto_chasis, ancho_pos_rueda_tra);
             glRotatef(giro_rot_ruedas, 1, 0, 0);
             rueda.draw(modo, r, g, b, grosor);
         glPopMatrix();  
         //Rueda delantera derecha
         glPushMatrix();
-            glTranslatef(-largo_chasis/2+largo_pos_rueda, 0, ancho_pos_rueda_del);
+            glTranslatef(-largo_chasis/2+largo_pos_rueda, alto_chasis, ancho_pos_rueda_del);
             glRotatef(giro_dir_ruedas, 0, 1, 0);
             glRotatef(giro_rot_ruedas, 1, 0, 0);
-            glScalef(-1, 1, 1);
+            glRotatef(180, 0, 1, 0);
             rueda.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Rueda trasera derecha
         glPushMatrix();
-            glTranslatef(-largo_chasis/2+largo_pos_rueda, 0, ancho_pos_rueda_tra);
+            glTranslatef(-largo_chasis/2+largo_pos_rueda, alto_chasis, ancho_pos_rueda_tra);
             glRotatef(giro_rot_ruedas, 1, 0, 0);
-            glScalef(-1, 1, 1);
+            glRotatef(180, 0, 1, 0);
             rueda.draw(modo, r, g, b, grosor);
         glPopMatrix();    
         
+        //Carroceria lateral derecha
         glPushMatrix();
-            glScalef(-1, 1, 1);
-            glTranslatef(largo/2-largo_cl/2, alto_chasis, 0.25);
-            carroceria_lateral.draw(modo, r, g, b, grosor);
+            glTranslatef(-largo/2+largo_cl/2, alto_chasis, 0.25);
+            carroceria_lateral_der->draw(modo, r, g, b, grosor);
         glPopMatrix();
-        
+        //Carroceria lateral izquierda
         glPushMatrix();
             glTranslatef(largo/2-largo_cl/2, alto_chasis, 0.25);
-            carroceria_lateral.draw(modo, r, g, b, grosor);
+            carroceria_lateral_izq.draw(modo, r, g, b, grosor);
         glPopMatrix();
         chasis.draw(modo, r, g, b, grosor);
         //Cuerpo delantero -- Esto tiene que ir lo primero por la transparencia
