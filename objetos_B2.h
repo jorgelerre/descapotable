@@ -425,6 +425,7 @@ public:
     float largo4, alto4, ancho4;
     float largo5, alto5, ancho5;
     float largo6, alto6, ancho6;
+    float largo_m, alto_m, ancho_m;
     float angulo_puerta;
     
     protected:
@@ -543,9 +544,10 @@ public:
        float giro_dir_ruedas;
        float giro_rot_ruedas;
        float giro_puerta_izq, giro_puerta_der;
-       float giro_puerta_maletero;
+       float giro_puerta_maletero, gpm_anterior;
        float giro_volante;
-       float coeficiente_techo;
+       float coeficiente_techo, ct_anterior;
+       
        //Valores
        float largo, alto, ancho;
        float largo_cl, alto_cl, ancho_cl;
@@ -565,6 +567,7 @@ public:
        float inclinacion_volante, alto_pos_volante;
        float ancho_pos_reposapies;
        float alto_pos_techo, ancho_pos_techo;
+       
        protected:
        _chasis chasis;
        _rueda rueda;
@@ -586,6 +589,7 @@ public:
        _palanca_cambios palanca_cambios;
        _reposapies reposapies;
        _techo* techo;
+       _cubo matricula;
 };
 
 

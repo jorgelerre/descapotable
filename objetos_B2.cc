@@ -899,8 +899,6 @@ _guardabarros::_guardabarros(){
         //Vertice nuevo de la curva
         aux.x = -largo / 2;  aux.y = alto*sin(angulo*i); aux.z = alto*cos(angulo*i);
         poligono.push_back(aux);
-        cout << "aux -> x= "<<aux.x<<"\ty= "<<aux.y<<"\tz= "<<aux.z<<endl;
-        cout << "Angulo = " << angulo*i << endl;
         poligono.push_back(aux);
         //Crear extrusion
         arco = new  _extrusion(poligono, largo, 0, 0, true, true);
@@ -1504,8 +1502,8 @@ _maletero::_maletero(float _angulo_puerta){
     largo3 = 3;                         alto3 = 0.25;             ancho3 = ancho1 + ancho2;
     largo4 = 0.25;                      alto4 = alto1 - alto2;    ancho4 = 1.5;
     largo5 = largo1-2*largo4-0.0001;    alto5 = alto1 - alto2;    ancho5 = 0.25;
-    largo6 = 0.25;                      alto6= 0.25;              ancho6 = ancho3 - ancho4 - ancho1;
-
+    largo6 = 0.25;                      alto6 = 0.25;             ancho6 = ancho3 - ancho4 - ancho1;
+    largo_m = 1.25;                      alto_m = 0.25;            ancho_m = 0.05;
 }
 
 void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
@@ -1560,9 +1558,19 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
         glScalef(largo2, alto2, ancho2);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
-    //Pieza 1 - Puerta del maletero / Parte vertical
-    glTranslatef(0, alto2 - alto1, ancho1/2 + ancho2/2);
+    
+    glTranslatef(0, alto2 - alto1, ancho2/2);
+    //Matricula trasera
     glPushMatrix();
+        glTranslatef(0, alto1/2 - alto_m, ancho1);
+        glScalef(largo_m, alto_m, ancho_m);
+        cubo.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    //Pieza 1 - Puerta del maletero / Parte vertical
+    
+    glPushMatrix();
+        glTranslatef(0, 0, ancho1/2);
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
@@ -1585,7 +1593,7 @@ _cuerpo_trasero::_cuerpo_trasero(){
     poligono.push_back(aux);
     aux.x = -largo2 / 2; aux.y = alto2; aux.z = ancho2;
     poligono.push_back(aux);
-    pieza2 = new  _extrusion(poligono, largo2, 0, 0, true, true);
+    pieza2 = new _extrusion(poligono, largo2, 0, 0, true, true);
 }
 
 
@@ -1789,7 +1797,6 @@ _techo::_techo(float _coeficiente){
     altura_pos = 0.9;
     anchura_pos = 0.7;
     alpha = (180/M_PI)*atan(anchura_pos/altura_pos);
-    cout << alpha << endl;
     giro1 = coef*180;        //Min = 0    Max = 180
     giro2 = coef*(90 + alpha);         //Min = 0    Max = 90 + alpha
     giro3 = coef*(90 + alpha); //Min = 0    Max = 90 + alpha
@@ -1850,12 +1857,15 @@ _descapotable::_descapotable(){
     
     //Variables giros
     giro_dir_ruedas = 0.0;       //Giros = [-22, 22]
-    giro_volante = 0.0;          //Giros = [-220, 220]
+    giro_volante    = 0.0;       //Giros = [-220, 220]
     giro_rot_ruedas = 0.0;       //Giros = [-inf, +inf]
     giro_puerta_izq = 0.0;       //Giros = [0, 70]
     giro_puerta_der = 0.0;       //Giros = [0, 70]
     giro_puerta_maletero = 0.0;  //Giros = [0, 80]
     coeficiente_techo = 0.0;     //Coeficiente = [0 (cerrado), 1(abierto)]
+    
+    gpm_anterior = giro_puerta_maletero;
+    ct_anterior  = coeficiente_techo;
     
     //Inicializaciones
     maletero = NULL;
@@ -1899,15 +1909,27 @@ _descapotable::~_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     //Inicializaciones en JOT
-    if(techo != NULL){
+    if(techo != NULL &&  ct_anterior != coeficiente_techo){
         delete techo;
+        techo = NULL;
+        cout << "Borro techo" << endl;
     }
-    if(maletero != NULL){
+    if(maletero != NULL && gpm_anterior != giro_puerta_maletero){
         delete maletero;
+        maletero = NULL;
+        cout << "Borro maletero" << endl;
     }
-    maletero = new _maletero(giro_puerta_maletero);
-    techo = new _techo(coeficiente_techo);
     
+    if(maletero == NULL){
+        maletero = new _maletero(giro_puerta_maletero);
+        cout << "Creo maletero" << endl;
+    }
+    if(techo == NULL){
+        techo = new _techo(coeficiente_techo);
+        cout << "Creo techo" << endl;
+    }
+
+    /************Composición del objeto************/
     glPushMatrix();
         glScalef(0.5, 0.5, 0.5);
         glTranslatef(0,0,-ancho/2);
@@ -2067,6 +2089,10 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
             cuerpo_delantero.draw(modo, r, g, b, grosor);
         glPopMatrix();
     glPopMatrix();
+
+    //Guardar valores actuales
+    gpm_anterior= giro_puerta_maletero;
+    ct_anterior = coeficiente_techo;
 }
 
 
