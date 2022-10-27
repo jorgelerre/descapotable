@@ -287,7 +287,7 @@ public:
        _puerta(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
        
-       //Valores+
+       //Valores
        int coef;
        float largo1, alto1, ancho1;
        float pos_largo_r, pos_alto_r, pos_ancho_r;
@@ -536,7 +536,7 @@ public:
 class _descapotable: public _triangulos3D
 {
 public:
-       _descapotable(float _gdr = 0, float _grr = 0, float _gpi = 0, float _gpd = 0, float _gpm = 0, float _coef_t = 0);
+       _descapotable();
        ~_descapotable();
        void draw(_modo modo, float r, float g, float b, float grosor);
        //Variables giros

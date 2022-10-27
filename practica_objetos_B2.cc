@@ -37,8 +37,7 @@ _extrusion *extrusion;
 _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
 _esfera esfera;
-//_descapotable descapotable;
-_puerta descapotable;
+_descapotable descapotable;
 _rotacion_ply rotacion_ply;
 
 
@@ -219,6 +218,62 @@ switch (Tecla1){
 	case GLUT_KEY_DOWN:Observer_angle_x++;break;
 	case GLUT_KEY_PAGE_UP:Observer_distance*=1.2;break;
 	case GLUT_KEY_PAGE_DOWN:Observer_distance/=1.2;break;
+	
+	case GLUT_KEY_F1:
+	    if(descapotable.giro_dir_ruedas < 22){
+	        descapotable.giro_dir_ruedas+=0.5;  //Valores giro_dir_ruedas = [-22, 22]
+	        descapotable.giro_volante+=5;       //Valores giro_volante= [-220, 220]
+	    }
+	break;
+	case GLUT_KEY_F2:
+	    if(descapotable.giro_dir_ruedas > -22){
+	        descapotable.giro_dir_ruedas-=0.5;  //Valores giro_dir_ruedas = [-22, 22]
+	        descapotable.giro_volante-=5;       //Valores giro_volante= [-220, 220]
+	    }
+	break;
+	
+	case GLUT_KEY_F3:
+	    descapotable.giro_rot_ruedas+=2;
+	break;
+	case GLUT_KEY_F4:
+	    descapotable.giro_rot_ruedas-=2;
+	break;
+	
+	case GLUT_KEY_F5:
+	    if(descapotable.giro_puerta_izq < 70)   //Giros = [0, 70]
+	        descapotable.giro_puerta_izq+=2;
+	break;
+	case GLUT_KEY_F6:
+	    if(descapotable.giro_puerta_izq > 0)    //Giros = [0, 70]
+	        descapotable.giro_puerta_izq-=2;
+	break;
+	case GLUT_KEY_F7:
+	    if(descapotable.giro_puerta_der < 70)   //Giros = [0, 70]
+	        descapotable.giro_puerta_der+=2;
+	break;
+	case GLUT_KEY_F8:
+	    if(descapotable.giro_puerta_der > 0)    //Giros = [0, 70]
+	        descapotable.giro_puerta_der-=2;
+	break;
+	
+	case GLUT_KEY_F9:
+	    if(descapotable.giro_puerta_maletero < 80)  //Giros = [0, 80]
+	        descapotable.giro_puerta_maletero+=2;
+	break;
+	case GLUT_KEY_F10:
+	    if(descapotable.giro_puerta_maletero > 0)   //Giros = [0, 80]
+	        descapotable.giro_puerta_maletero-=2;
+	break;
+	
+	case GLUT_KEY_F11:
+	    if(descapotable.coeficiente_techo < 1)  //Coeficiente = [0 (cerrado), 1(abierto)]
+	        descapotable.coeficiente_techo+=0.02;
+	break;
+	case GLUT_KEY_F12:
+	    if(descapotable.coeficiente_techo > 0.01)  //Coeficiente = [0 (cerrado), 1(abierto)]
+	        descapotable.coeficiente_techo-=0.02;
+	break;
+	
 	}
 glutPostRedisplay();
 }

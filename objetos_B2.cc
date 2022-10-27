@@ -1142,8 +1142,7 @@ _retrovisor::_retrovisor(bool lado_izquierdo){
 
 
 void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
-    //Pieza 2 - Brazo pegado a puerta
-    
+    //Pieza 2 - Brazo 
     glPushMatrix();
         glRotatef(30*(1-2*coef), 0, 0, 1);
         glTranslatef((-largo2/2+0.02)*(1-2*coef), 0, 0);
@@ -1155,7 +1154,7 @@ void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
     
     //Pieza 1 - Espejo retrovisor
     glTranslatef((largo1/2)*(1-2*coef), 0, 0);
-    glRotatef(10, 0, 1, 0);
+    glRotatef(10*(1-2*coef), 0, 1, 0);
     glScalef(largo1, alto1, ancho1);
     glTranslatef(0, 0, -0.5);   //Centramos el cilindro
     glRotatef(90, 1, 0, 0);
@@ -1168,8 +1167,9 @@ void _retrovisor::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 
 _puerta::_puerta(bool lado_izquierdo){
-    coef = 1; //coef = lado_izquierdo ? 0 : 1;
-    retrovisor = new _retrovisor(false);
+    coef = lado_izquierdo ? 0 : 1;
+    retrovisor = new _retrovisor(lado_izquierdo);
+    
     largo1 = 0.25, alto1 = 1.5, ancho1 = 2.25;
     pos_largo_r = largo1/2 + 0.125, pos_alto_r = alto1+0.05, pos_ancho_r = -ancho1*2/11;
 }
@@ -1207,7 +1207,6 @@ _cuerpo_delantero::_cuerpo_delantero(){
 
 void _cuerpo_delantero::draw(_modo modo, float r, float g, float b, float grosor){
     //Pieza 2 - Caja del motor
-    
     glTranslatef(0, 0, ancho2/2);
     glPushMatrix();
         //glTranslatef(0, 0, -ancho2/2);
@@ -1799,15 +1798,20 @@ _techo::_techo(float _coeficiente){
     largo3 = 3;              alto3 = 0.125;          
     ancho3 = sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos);
     ancho3 -= (sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos)-0.75)*coef;
-    cout << "Ancho 3 = " << ancho3 << endl;
-    cout << ancho3*cos(alpha) << " " << ancho3*sin(alpha) << endl;
-    cout << cos(M_PI) << endl;
 }
 
 void _techo::draw(_modo modo, float r, float g, float b, float grosor){
-    
+    /*
+    //Actualiza valores
+    giro1 = coef*180;
+    giro2 = coef*(90 + alpha);  
+    giro3 = coef*(90 + alpha);
+    ancho1 = 1.25 - 0.5*coef;
+    ancho2 = 1 - 0.25*coef;
+    ancho3 = sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos);
+    ancho3 -= (sqrt(anchura_pos*anchura_pos+altura_pos*altura_pos)-0.75)*coef;
+    */
     //Pieza 3 - Parte trasera
-    
     //glTranslatef(0, alto3, 0);
     glRotatef(giro3, -1, 0, 0);
     glTranslatef(0, ancho3*cos(alpha*M_PI/180), ancho3*sin(alpha*M_PI/180));
@@ -1842,20 +1846,20 @@ void _techo::draw(_modo modo, float r, float g, float b, float grosor){
 //************************************************************************
 // descapotable (objeto final)
 //************************************************************************
-_descapotable::_descapotable(float _gdr, float _grr, float _gpi, float _gpd, float _gpm, float _coef_t){
+_descapotable::_descapotable(){
     
     //Variables giros
-    giro_dir_ruedas = _gdr;  //Giros = [-22, 22]
-    giro_volante = _gdr*10;  //Giros = [-220, 220]
-    giro_rot_ruedas = _grr;     //Giros = [-inf, +inf]
-    giro_puerta_izq = _gpi;    //Giros = [0, 70]
-    giro_puerta_der = _gpd;    //Giros = [0, 70]
-    giro_puerta_maletero = _gpm;
-    coeficiente_techo = _coef_t;    //Coeficiente = [0 (cerrado), 1(abierto)]
+    giro_dir_ruedas = 0.0;       //Giros = [-22, 22]
+    giro_volante = 0.0;          //Giros = [-220, 220]
+    giro_rot_ruedas = 0.0;       //Giros = [-inf, +inf]
+    giro_puerta_izq = 0.0;       //Giros = [0, 70]
+    giro_puerta_der = 0.0;       //Giros = [0, 70]
+    giro_puerta_maletero = 0.0;  //Giros = [0, 80]
+    coeficiente_techo = 0.0;     //Coeficiente = [0 (cerrado), 1(abierto)]
     
     //Inicializaciones
-    maletero = new _maletero(giro_puerta_maletero);
-    techo = new _techo(coeficiente_techo);
+    maletero = NULL;
+    techo = NULL;
     carroceria_lateral_der = new _carroceria_lateral(false);
     puerta_der = new _puerta(false);
     
@@ -1894,6 +1898,16 @@ _descapotable::~_descapotable(){
 
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
+    //Inicializaciones en JOT
+    if(techo != NULL){
+        delete techo;
+    }
+    if(maletero != NULL){
+        delete maletero;
+    }
+    maletero = new _maletero(giro_puerta_maletero);
+    techo = new _techo(coeficiente_techo);
+    
     glPushMatrix();
         glScalef(0.5, 0.5, 0.5);
         glTranslatef(0,0,-ancho/2);
@@ -1997,7 +2011,6 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         glPushMatrix();
             glTranslatef(largo_puerta/2 - largo_chasis/2, alto_pos_puerta, ancho_pos_puerta);
             glRotatef(giro_puerta_der, 0, 1, 0);
-            glScalef(-1, 1, 1);
             puerta_der->draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Puerta izquierda
@@ -2012,7 +2025,7 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         glPushMatrix();
             glTranslatef(largo_chasis/2-largo_pos_rueda, alto_chasis, ancho_pos_rueda_del);
             glRotatef(giro_dir_ruedas, 0, 1, 0);
-            //glRotatef(giro_rot_ruedas, 1, 0, 0);
+            glRotatef(giro_rot_ruedas, 1, 0, 0);
             rueda.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Rueda trasera izquierda
