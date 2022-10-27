@@ -27,6 +27,9 @@ GLfloat Size_x,Size_y,Front_plane,Back_plane;
 // variables que determninan la posicion y tamaño de la ventana X
 int Window_x=50,Window_y=50,Window_width=650,Window_high=650;
 
+//variable que controla la activacion de la animacion
+bool animacion_activa = false;
+
 
 // objetos
 _cubo cubo;
@@ -115,9 +118,9 @@ glEnd();
 void draw_objects()
 {
 
-switch (t_objeto){
-	case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
-	case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
+    switch (t_objeto){
+	    case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
+	    case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
         case OBJETO_PLY: ply.draw(modo,1.0,0.6,0.0,5);break;
         case ROTACION: rotacion.draw(modo,1.0,0.0,0.0,5);break;
         case EXTRUSION: extrusion->draw(modo,1.0,0.0,0.0,5);break;
@@ -126,7 +129,7 @@ switch (t_objeto){
         case CILINDRO: cilindro.draw(modo,1.0,0.0,0.0,1);break;
         case ROTACION_PLY: rotacion_ply.draw(modo,1.0,0.6,0.0,5);break;
         case DESCAPOTABLE: descapotable.draw(modo,1.0,0.6,0.0,5);break;
-	}
+    }
 
 }
 
@@ -193,6 +196,7 @@ switch (toupper(Tecla1)){
         case 'Y':t_objeto=CILINDRO;break;
         case 'Z':t_objeto=ROTACION_PLY;break;
         case 'D':t_objeto=DESCAPOTABLE;break;
+        case 'A':animacion_activa = !animacion_activa; break;
 	}
 glutPostRedisplay();
 }
@@ -266,11 +270,11 @@ switch (Tecla1){
 	
 	case GLUT_KEY_F11:
 	    if(descapotable.coeficiente_techo < 1)  	//Coeficiente = [0 (cerrado), 1(abierto)]
-	        descapotable.coeficiente_techo+=0.02;
+	        descapotable.coeficiente_techo+=0.005;
 	break;
 	case GLUT_KEY_F12:
 	    if(descapotable.coeficiente_techo > 0.01)  //Coeficiente = [0 (cerrado), 1(abierto)]
-	        descapotable.coeficiente_techo-=0.02;
+	        descapotable.coeficiente_techo-=0.005;
 	break;
 	}
 glutPostRedisplay();
@@ -308,72 +312,84 @@ glViewport(0,0,Window_width,Window_high);
 
 void animacion(){
     static int estado = 0;
-    static avance = 0;
-    switch(estado){
-	    case 0:  //Abre maletero  
-            if(descapotable.giro_puerta_maletero < 80)  //Giros = [0, 80]
-	            descapotable.giro_puerta_maletero+=2;
-            else
-                estado = 1;
-            break;    
-        case 1:  //Portazo maletero
-            if(descapotable.giro_puerta_maletero < 80)  //Giros = [0, 80]
-	            descapotable.giro_puerta_maletero-=5;
-            else
-                estado = 2;
-            break;
-        case 2:  //Abre puerta del conductor y del pasajero
-            if(descapotable.giro_puerta_der < 70)  //Giros = [0, 70]
-	            descapotable.giro_puerta_der+=2;
-            if(descapotable.giro_puerta_izq < 70)  //Giros = [0, 70]
-	            descapotable.giro_puerta_izq+=2;
-            if(descapotable.giro_puerta_der >= 70 && descapotable.giro_puerta_izq >= 70)
-                estado = 3;
-            break;
-        case 3: //Cierra puerta del conductor y del pasajero
-            if(descapotable.giro_puerta_der > 0)  //Giros = [0, 70]
-	            descapotable.giro_puerta_der-=2;
-            if(descapotable.giro_puerta_izq > 0)  //Giros = [0, 70]
-	            descapotable.giro_puerta_izq-=2;
-            if(descapotable.giro_puerta_der <= 0 && descapotable.giro_puerta_izq <= 0)
-                estado = 4;
-            break;
-        case 4: //Marcha atras y giro de ruedas a la izquierda
-            if(descapotable.giro_dir_ruedas > -20)  //Giros = [0, -20]
-	            descapotable.giro_dir_ruedas--;
-            descapotable.giro_rot_ruedas--;
-            if(descapotable.giro_dir_ruedas <= -20)
-                estado = 5;
-            break;
-        case 5: //Marcha adelante y giro de ruedas a la derecha
-            if(descapotable.giro_dir_ruedas < 20)  //Giros = [-20, 20]
-	            descapotable.giro_dir_ruedas++;
-            descapotable.giro_rot_ruedas++;
-            if(descapotable.giro_dir_ruedas >= 20)
-                estado = 6;
-            break;
-        case 6: //Marcha adelante y giro de ruedas al centro
-            if(descapotable.giro_dir_ruedas > 0)  //Giros = [-20, 20]
-	            descapotable.giro_dir_ruedas--;
-            descapotable.giro_rot_ruedas++;
-            if(descapotable.giro_dir_ruedas <= 20)
-                estado = 7;
-            break;
-        case 7: //Marcha adelante y giro de ruedas al centro
-            if(descapotable.giro_dir_ruedas < 0)  //Giros = [-20, 20]
-	            descapotable.giro_dir_ruedas+=2;
-            descapotable.giro_rot_ruedas++;
-            if(descapotable.giro_dir_ruedas >= 0)
-                estado = 8;
-            break;
-        case 8: //Marcha adelante
-            descapotable.giro_rot_ruedas+=5;
-            avance++;
-            if(avance >= 100){
-                estado = 0;
-                avance = 0;
-            }
-            break;
+    static int avance = 0;
+    if(animacion_activa){
+        switch(estado){
+	        case 0:  //Abre maletero  
+                if(descapotable.giro_puerta_maletero < 80)  //Giros = [0, 80]
+	                descapotable.giro_puerta_maletero+=1;
+                else
+                    estado = 1;
+                break;    
+            case 1:  //Portazo maletero
+                if(descapotable.giro_puerta_maletero > 0)  //Giros = [0, 80]
+	                descapotable.giro_puerta_maletero-=2;
+                else
+                    estado = 2;
+                break;
+            case 2:  //Abre puerta del conductor y del pasajero
+                if(descapotable.giro_puerta_der < 70)  //Giros = [0, 70]
+	                descapotable.giro_puerta_der+=2;
+                if(descapotable.giro_puerta_izq < 70)  //Giros = [0, 70]
+	                descapotable.giro_puerta_izq+=2;
+                if(descapotable.giro_puerta_der >= 70 && descapotable.giro_puerta_izq >= 70)
+                    estado = 3;
+                break;
+            case 3: //Cierra puerta del conductor y del pasajero
+                if(descapotable.giro_puerta_der > 0)  //Giros = [0, 70]
+	                descapotable.giro_puerta_der-=2;
+                if(descapotable.giro_puerta_izq > 0)  //Giros = [0, 70]
+	                descapotable.giro_puerta_izq-=2;
+                if(descapotable.giro_puerta_der <= 0 && descapotable.giro_puerta_izq <= 0)
+                    estado = 4;
+                break;
+            case 4: //Marcha atras y giro de ruedas a la izquierda
+                if(descapotable.giro_dir_ruedas > -20)  //Giros = [0, -20]
+	                descapotable.giro_dir_ruedas-=0.2;
+                descapotable.giro_rot_ruedas-=2;
+                if(descapotable.giro_dir_ruedas <= -20)
+                    estado = 5;
+                break;
+            case 5: //Marcha adelante y giro de ruedas a la derecha
+                if(descapotable.giro_dir_ruedas < 20)  //Giros = [-20, 20]
+	                descapotable.giro_dir_ruedas+=0.2;
+                descapotable.giro_rot_ruedas+=2;
+                if(descapotable.giro_dir_ruedas >= 20)
+                    estado = 6;
+                break;
+            case 6: //Marcha adelante y giro de ruedas al centro
+                if(descapotable.giro_dir_ruedas > 0)  //Giros = [-20, 20]
+	                descapotable.giro_dir_ruedas-=0.2;
+                descapotable.giro_rot_ruedas+=3;
+                if(descapotable.giro_dir_ruedas <= 0)
+                    estado = 7;
+                break;
+            case 7: //Marcha adelante y apertura de techo
+                descapotable.giro_rot_ruedas+=5;
+                if(descapotable.coeficiente_techo < 1){
+                    descapotable.coeficiente_techo+=0.005;
+                }
+                if(descapotable.coeficiente_techo >= 1)
+                    estado = 8;
+                break;
+            case 8: //Marcha adelante
+                descapotable.giro_rot_ruedas+=5 + 10*sin(M_PI*avance/400.0);
+                avance++;
+                if(avance >= 400){
+                    estado = 9;
+                    avance = 0;
+                }
+                break;
+            case 9: //Marcha adelante y cierre de techo
+                descapotable.giro_rot_ruedas+=5;
+                if(descapotable.coeficiente_techo > 0){
+                    descapotable.coeficiente_techo-=0.005;
+                }
+                if(descapotable.coeficiente_techo <= 0)
+                    estado = 0;
+                break;
+        }
+        glutPostRedisplay();
     }
 }
 //***************************************************************************
@@ -458,6 +474,7 @@ glutKeyboardFunc(normal_key);
 // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
 glutSpecialFunc(special_key);
 
+glutIdleFunc(animacion);
 // funcion de inicialización
 initialize();
 

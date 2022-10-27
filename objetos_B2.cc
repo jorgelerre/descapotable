@@ -1912,21 +1912,21 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     if(techo != NULL &&  ct_anterior != coeficiente_techo){
         delete techo;
         techo = NULL;
-        cout << "Borro techo" << endl;
+        //cout << "Borro techo" << endl;
     }
     if(maletero != NULL && gpm_anterior != giro_puerta_maletero){
         delete maletero;
         maletero = NULL;
-        cout << "Borro maletero" << endl;
+        //cout << "Borro maletero" << endl;
     }
     
     if(maletero == NULL){
         maletero = new _maletero(giro_puerta_maletero);
-        cout << "Creo maletero" << endl;
+        //cout << "Creo maletero" << endl;
     }
     if(techo == NULL){
         techo = new _techo(coeficiente_techo);
-        cout << "Creo techo" << endl;
+        //cout << "Creo techo" << endl;
     }
 
     /************Composición del objeto************/
@@ -1955,8 +1955,8 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
         //Volante
         glPushMatrix();
             glTranslatef(largo_pos_asiento_d, alto_chasis_trasero/2 + alto_pos_volante, ancho_pos_asiento_d);
-            glRotatef(giro_volante, 0, 0, 1);
             glRotatef(inclinacion_volante, 1, 0, 0);
+            glRotatef(giro_volante, 0, 0, 1);
             volante.draw(modo, r, g, b, grosor);
         glPopMatrix();
         
