@@ -9,24 +9,30 @@
 
 
 const float AXIS_SIZE=5000;
-const int LADOS_CIRCULO=50;
+const int LADOS_CIRCULO=64;
+
+
 typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS} _modo;
 
 //*************************************************************************
-// clase punto
+// clase color
 //*************************************************************************
 struct _color{
 	float r;
 	float g;
 	float b;
 	float a;
+	_color() : r(1.0), g(1.0), b(1.0), a(1.0) {}
+	_color(float _r, float _g, float _b, float _a) : r(_r), g(_g), b(_b), a(_a) {}
 };
 
+
+//*************************************************************************
+// clase punto
+//*************************************************************************
 class _puntos3D
 {
 public:
-
-  
 	_puntos3D();
 void 	draw_puntos(float r, float g, float b, int grosor);
 
@@ -51,6 +57,7 @@ void 	draw(_modo modo, float r, float g, float b, float grosor);
 void 	colors_random();
 void 	colors_chess(float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2);
 void    asignar_color(float r, float g, float b, float a);
+void    asignar_color(const _color &color);
 
 vector<_vertex3i> caras;
 vector<_color> colores;
@@ -161,6 +168,7 @@ public:
 //************************************************************************
 // práctica 3, objeto jerárquico articulado descapotable
 //************************************************************************
+
 //************************************************************************
 // semicilindro
 //************************************************************************
@@ -189,7 +197,7 @@ class _chasis: public _triangulos3D
 public:
        _chasis();
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color);
        //Valores
        float largo1, alto1, ancho1;
        float largo2, alto2, ancho2;
@@ -209,7 +217,7 @@ class _guardabarros: public _triangulos3D
 public:
        _guardabarros();
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color);       
        //Valores
        float largo, alto, ancho;
        float angulo;
@@ -225,7 +233,7 @@ class _carroceria_lateral: public _triangulos3D
 public:
        _carroceria_lateral(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color);       
        //Valores
        float coef;
        float largo1, alto1, ancho1, altura1;
@@ -255,7 +263,7 @@ class _rueda: public _triangulos3D
 public:
        _rueda();
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color_rueda, _color color_llanta);
        //Valores
        
        
@@ -269,15 +277,15 @@ class _retrovisor: public _triangulos3D
 public:
        _retrovisor(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color_cristal, _color color_trasero);
        //Valores
        int coef;
        float largo1, alto1, ancho1;
        float largo2, alto2, ancho2;
-       float largo3, alto3, ancho3;
        
        protected:
        _cilindro cilindro;
+       _cilindro cristal;
 };
 
 /*************************************************************************/
@@ -286,7 +294,7 @@ class _puerta: public _triangulos3D
 public:
        _puerta(bool lado_izquierdo = true);
        void draw(_modo modo, float r, float g, float b, float grosor);
-       
+       void asignar_color(_color color_puerta, _color color_cristal, _color color_trasero);
        //Valores
        int coef;
        float largo1, alto1, ancho1;
@@ -303,6 +311,7 @@ class _cuerpo_delantero: public _triangulos3D
 public:
        _cuerpo_delantero();
        void draw(_modo modo, float r, float g, float b, float grosor);
+       void asignar_color(_color color_capo, _color color_cristal);
        //Valores
        float largo1, alto1, ancho1;
        float escalaY;
@@ -323,6 +332,7 @@ class _faro_delantero: public _triangulos3D
 public:
        _faro_delantero();
        void draw(_modo modo, float r, float g, float b, float grosor);
+       void asignar_color(_color color_cuerpo, _color color_cristal);
        //Valores
        float largo1, alto1, ancho1;
        float radio_f1, ancho_f1, altura_f1;
