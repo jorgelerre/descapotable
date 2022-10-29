@@ -113,6 +113,27 @@ void _triangulos3D::draw_solido_colores( )
 	glEnd();
 }
 
+void _triangulos3D::draw_solido_colores_random(){
+    unsigned int i;
+	float r, g, b, a;
+	glPolygonMode(GL_FRONT,GL_FILL);
+	srand(1);
+	glBegin(GL_TRIANGLES);
+	for (i=0;i<caras.size();i++){
+        r = (rand()%256) / 256.0;
+        g = (rand()%256) / 256.0;
+        b = (rand()%256) / 256.0;
+        a = 1.0;
+
+        glColor4f(r,g,b,a);
+		
+		glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
+		glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
+		glVertex3fv((GLfloat *) &vertices[caras[i]._2]);
+	}
+	glEnd();
+}
+
 
 //*************************************************************************
 // dibujar con distintos modos
@@ -121,10 +142,11 @@ void _triangulos3D::draw_solido_colores( )
 void _triangulos3D::draw(_modo modo, float r, float g, float b, float grosor)
 {
 switch (modo){
-	case POINTS:draw_puntos(r, g, b, grosor);break;
-	case EDGES:draw_aristas(r, g, b, grosor);break;
-	case SOLID:draw_solido(r, g, b);		 break;
-	case SOLID_COLORS:draw_solido_colores(); break;
+	case POINTS:draw_puntos(r, g, b, grosor);       break;
+	case EDGES:draw_aristas(r, g, b, grosor);       break;
+	case SOLID:draw_solido(r, g, b);		        break;
+	case SOLID_COLORS:draw_solido_colores();        break;
+	case SOLID_RANDOM:draw_solido_colores_random(); break;
 	}
 }
 
@@ -1354,21 +1376,21 @@ void _luz_antiniebla::draw(_modo modo, float r, float g, float b, float grosor){
         glTranslatef(0, alto1/2, 0);
         glScalef(largo1, alto1, ancho1);
         glRotatef(90, 0, 0, -1);
-        semicilindro.draw(modo, r, g, b, grosor);
+        semicilindro_d.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
     //Parte 3 - Centro - derecha
     glTranslatef(-largo2/2, 0, 0);
     glPushMatrix();
         glScalef(largo2, alto2, ancho2);
-        cubo.draw(modo, r, g, b, grosor);
+        cubo_d.draw(modo, r, g, b, grosor);
     glPopMatrix();
     //Parte 2 - Centro - izquierda
     glTranslatef(-largo2, 0, 0);
     
     glPushMatrix();
         glScalef(largo2, alto2, ancho2);
-        cubo.draw(modo, r, g, b, grosor);
+        cubo_i.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
     //Parte 1 - Lateral izquierdo
@@ -1376,9 +1398,15 @@ void _luz_antiniebla::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
         glScalef(largo1, alto1, ancho1);
         glRotatef(90, 0, 0, 1);
-        semicilindro.draw(modo, r, g, b, grosor);
-    glPopMatrix();
-    
+        semicilindro_i.draw(modo, r, g, b, grosor);
+    glPopMatrix(); 
+}
+
+void _luz_antiniebla::asignar_color(_color color_izq, _color color_der){
+    semicilindro_i.asignar_color(color_izq);
+    semicilindro_d.asignar_color(color_der);
+    cubo_i.asignar_color(color_izq);
+    cubo_d.asignar_color(color_der);
 }
 
 //************************************************************************
@@ -1400,18 +1428,18 @@ void _morro::draw(_modo modo, float r, float g, float b, float grosor){
         glPushMatrix();
             glTranslatef(0, alto1, ancho1 + radio2 + ancho5/2);
             glScalef(largo5, alto5, ancho5);
-            cubo.draw(modo, r, g, b, grosor);
+            bigotera.draw(modo, r, g, b, grosor);
         glPopMatrix();
         
         //Pieza 4 - Luces antiniebla - derecha
         glPushMatrix();
             glTranslatef(-largo_pos_antiniebla, alto_pos_antiniebla, ancho1 + radio2);
-            luz_antiniebla.draw(modo, r, g, b, grosor);
+            luz_antiniebla_d.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Pieza 3 - Luces antiniebla - izquierda
         glPushMatrix();
             glTranslatef(largo_pos_antiniebla, alto_pos_antiniebla, ancho1 + radio2);
-            luz_antiniebla.draw(modo, r, g, b, grosor);
+            luz_antiniebla_i.draw(modo, r, g, b, grosor);
         glPopMatrix();
         //Pieza 2 - Barras parrilla
         glPushMatrix();
@@ -1432,9 +1460,17 @@ void _morro::draw(_modo modo, float r, float g, float b, float grosor){
         //glTranslatef
         glPushMatrix();
             glScalef(largo1, alto1, ancho1);
-            cubo.draw(modo, r, g, b, grosor);
+            parrilla.draw(modo, r, g, b, grosor);
         glPopMatrix();
     glPopMatrix();
+}
+
+void _morro::asignar_color(_color color_intermitente, _color color_faro_an, _color barras_parrilla, _color color_parrilla, _color color_bigotera){
+    luz_antiniebla_d.asignar_color(color_intermitente, color_faro_an);
+    luz_antiniebla_i.asignar_color(color_faro_an, color_intermitente);
+    cubo.asignar_color(barras_parrilla);
+    bigotera.asignar_color(color_bigotera);
+    parrilla.asignar_color(color_parrilla);
 }
 
 //************************************************************************
@@ -1481,6 +1517,10 @@ void _parachoques_delantero::draw(_modo modo, float r, float g, float b, float g
     glPopMatrix();
 }
 
+void _parachoques_delantero::asignar_color(_color color_parachoques){
+    cubo.asignar_color(color_parachoques);
+    cilindro.asignar_color(color_parachoques);
+}
 //************************************************************************
 // luces traseras
 //************************************************************************
@@ -1490,13 +1530,6 @@ _luz_trasera::_luz_trasera(){
 }
 
 void _luz_trasera::draw(_modo modo, float r, float g, float b, float grosor){
-    //Pieza 2 - Faro
-    glPushMatrix();
-        glScalef(radio2/2, radio2/2, ancho2);
-        glRotatef(90, 1, 0, 0);
-        semiesfera.draw(modo, r, g, b, grosor);
-    glPopMatrix();
-    
     //Pieza 1 - Base
     glPushMatrix();
         glTranslatef(0, 0, -ancho1);
@@ -1504,8 +1537,22 @@ void _luz_trasera::draw(_modo modo, float r, float g, float b, float grosor){
         glRotatef(90, 1, 0, 0);
         cilindro.draw(modo, r, g, b, grosor);
     glPopMatrix();
+    
+    //(cambio de orden por transparencia)
+    //Pieza 2 - Faro
+    glPushMatrix();
+        glScalef(radio2/2, radio2/2, ancho2);
+        glRotatef(90, 1, 0, 0);
+        semiesfera.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+    
+    
 }
 
+void _luz_trasera::asignar_color(_color color_base, _color color_luz){
+    cilindro.asignar_color(color_base);
+    semiesfera.asignar_color(color_luz);
+}
 //************************************************************************
 // parachoques trasero
 //************************************************************************
@@ -1547,6 +1594,11 @@ void _parachoques_trasero::draw(_modo modo, float r, float g, float b, float gro
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
+}
+
+void _parachoques_trasero::asignar_color(_color color_parachoques){
+    cubo.asignar_color(color_parachoques);
+    cilindro.asignar_color(color_parachoques);
 }
 
 //************************************************************************
@@ -1621,7 +1673,7 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
         glTranslatef(0, alto1/2 - alto_m, ancho1);
         glScalef(largo_m, alto_m, ancho_m);
-        cubo.draw(modo, r, g, b, grosor);
+        matricula.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     //Pieza 1 - Puerta del maletero / Parte vertical
@@ -1631,6 +1683,11 @@ void _maletero::draw(_modo modo, float r, float g, float b, float grosor){
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
+}
+
+void _maletero::asignar_color(_color color_maletero, _color color_matricula){
+    cubo.asignar_color(color_maletero);
+    matricula.asignar_color(color_matricula);
 }
 
 //************************************************************************
@@ -1673,6 +1730,12 @@ void _cuerpo_trasero::draw(_modo modo, float r, float g, float b, float grosor){
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
 }
+
+void _cuerpo_trasero::asignar_color(_color color_cuerpo_t){
+    cubo.asignar_color(color_cuerpo_t);
+    pieza2->asignar_color(color_cuerpo_t);
+}
+
 
 //************************************************************************
 // Asiento trasero
@@ -1723,9 +1786,15 @@ void _asiento::draw(_modo modo, float r, float g, float b, float grosor){
     glPushMatrix();
         glTranslatef(0, -alto1 - alto2/2, -ancho1/2);
         glScalef(largo1, alto1, ancho1);
-        cubo.draw(modo, r, g, b, grosor);
+        base.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
+}
+
+void _asiento::asignar_color(_color color_base, _color color_asiento){
+    base.asignar_color(color_base);
+    cubo.asignar_color(color_asiento);
+    semicilindro.asignar_color(color_asiento);
 }
 //************************************************************************
 // volante
@@ -1755,8 +1824,8 @@ void _volante::draw(_modo modo, float r, float g, float b, float grosor){
     }
     
     //Parte 1 - Parte exterior
-    float angulo = (360/ LADOS_CIRCULO);
-    for(int i = 0; i <= LADOS_CIRCULO +1; i++){
+    float angulo = (360.0/ LADOS_CIRCULO);
+    for(int i = 0; i <= LADOS_CIRCULO; i++){
         glRotatef(angulo, 0, 0, 1);
         glPushMatrix();
             glTranslatef(0, radio, 0);
@@ -1767,6 +1836,9 @@ void _volante::draw(_modo modo, float r, float g, float b, float grosor){
     }
     
     
+}
+void _volante::asignar_color(_color color_volante){
+    cilindro.asignar_color(color_volante);
 }
 
 //************************************************************************
@@ -1800,7 +1872,7 @@ void _palanca_cambios::draw(_modo modo, float r, float g, float b, float grosor)
     glTranslatef(0, -alto2, 0);
     glPushMatrix();
         glScalef(largo2, alto2, ancho2);
-        cubo.draw(modo, r, g, b, grosor);
+        base.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
     //Pieza 1 - Compartimento central
@@ -1809,6 +1881,14 @@ void _palanca_cambios::draw(_modo modo, float r, float g, float b, float grosor)
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
+}
+
+void _palanca_cambios::asignar_color(_color color_comp, _color color_base, _color color_palanca)
+{
+    cilindro.asignar_color(color_palanca);
+    esfera.asignar_color(color_palanca);
+    base.asignar_color(color_base);
+    cubo.asignar_color(color_comp);
 }
 
 //************************************************************************
@@ -1844,6 +1924,12 @@ void _reposapies::draw(_modo modo, float r, float g, float b, float grosor){
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
+}
+
+void _reposapies::asignar_color(_color color_reposapies)
+{
+    cubo.asignar_color(color_reposapies);
+    pieza2->asignar_color(color_reposapies);
 }
 
 //************************************************************************
@@ -1903,9 +1989,12 @@ void _techo::draw(_modo modo, float r, float g, float b, float grosor){
         glScalef(largo1, alto1, ancho1);
         cubo.draw(modo, r, g, b, grosor);
     glPopMatrix();
-    
 }
 
+void _techo::asignar_color(_color color_techo)
+{
+    cubo.asignar_color(color_techo);
+}
 
 //************************************************************************
 // descapotable (objeto final)
@@ -1947,6 +2036,9 @@ _descapotable::_descapotable(){
                                                     ancho_pos_cuerpo_t = 4;
     alto_pos_faro_d = 0.5;
     alto_pos_luz_t = 1.5;
+    alto_pos_luz_t2 = 1;
+    alto_pos_luz_t3 = 0.5;
+    coef_luz_trasera_inf= 0.5;
     ancho_pos_parachoques_t = -0.15;
     largo_asiento_t = 3;
     ancho_pos_asiento_t = 5.5;
@@ -1956,9 +2048,17 @@ _descapotable::_descapotable(){
     alto_pos_techo = 1.5;
     ancho_pos_techo = 3.5;
     
+    
     //Colores
+    COLOR_CARROCERIA.r = 1.0;   COLOR_CARROCERIA.g = 0.0; 
+    COLOR_CARROCERIA.b = 0.0;   COLOR_CARROCERIA.a = 1.0;
+    COLOR_MATRICULA.r = 0.5;    COLOR_MATRICULA.g = 0.5; 
+    COLOR_MATRICULA.b = 0.5;    COLOR_MATRICULA.a = 1.0;
+    COLOR_TECHO.r = 0.5;        COLOR_TECHO.g = 0.5; 
+    COLOR_TECHO.b = 0.5;        COLOR_TECHO.a = 1.0;
+    
+    
     const _color COLOR_CHASIS(0.5,0.5,0.5,1.0);
-    const _color COLOR_CARROCERIA(1.0,0.0,0.0,1.0);
     const _color COLOR_RUEDA(0.0, 0.0, 0.0, 1.0);
     const _color COLOR_LLANTA(0.6, 0.6, 0.6, 1.0);
     const _color COLOR_RETROVISOR(1.0, 0.1, 0.1, 1.0);
@@ -1966,7 +2066,18 @@ _descapotable::_descapotable(){
     const _color COLOR_CRISTAL(0.5, 0.5, 1, 0.4);
     const _color COLOR_FARO(0.7, 0.7, 0.7, 1.0);
     const _color COLOR_CRISTAL_FARO(0.9, 0.9, 1, 0.7);
+    const _color COLOR_INTERMITENTE(0.9, 0.9, 0.1, 1.0);
+    const _color COLOR_PARRILLA(0.1, 0.1, 0.1, 1.0);
+    const _color COLOR_BARRAS_PARRILLA(0.3, 0.3, 0.3, 1.0);
+    const _color COLOR_BIGOTERA(0.4, 0.2, 0.2, 1.0);
+    const _color COLOR_PARACHOQUES(0.9, 0.9, 0.9, 1.0);
+    const _color COLOR_CRISTAL_FARO_T(1.0, 0.3, 0.3, 0.9);
+    const _color COLOR_ASIENTO(1.0, 1.0, 0.7, 1.0);
+    const _color COLOR_COMPARTIMENTO_CC(0.5, 0.0, 0.0, 1.0);
+    const _color COLOR_BASE_CC(0.7, 0.0, 0.0, 1.0);
+    const _color PALANCA_CC(0.5, 0.5, 0.5, 1.0);
     
+    //Pintar objetos
     chasis.asignar_color(COLOR_CHASIS);
     carroceria_lateral_izq.asignar_color(COLOR_CARROCERIA);
     carroceria_lateral_der->asignar_color(COLOR_CARROCERIA);
@@ -1975,6 +2086,17 @@ _descapotable::_descapotable(){
     puerta_der->asignar_color(COLOR_CARROCERIA, COLOR_ESPEJO, COLOR_RETROVISOR);
     cuerpo_delantero.asignar_color(COLOR_CARROCERIA, COLOR_CRISTAL);
     faro_delantero.asignar_color(COLOR_FARO, COLOR_CRISTAL_FARO);
+    morro.asignar_color(COLOR_INTERMITENTE, COLOR_FARO, COLOR_BARRAS_PARRILLA, COLOR_PARRILLA, COLOR_BIGOTERA);
+    parachoques_delantero.asignar_color(COLOR_PARACHOQUES);
+    parachoques_trasero.asignar_color(COLOR_PARACHOQUES);
+    luz_trasera.asignar_color(COLOR_FARO, COLOR_CRISTAL_FARO_T);
+    luz_trasera_int.asignar_color(COLOR_FARO, COLOR_INTERMITENTE);
+    luz_trasera_marcha_atras.asignar_color(COLOR_FARO, COLOR_CRISTAL_FARO);
+    cuerpo_trasero.asignar_color(COLOR_CARROCERIA);
+    asiento.asignar_color(COLOR_RUEDA, COLOR_ASIENTO);
+    volante.asignar_color(COLOR_RUEDA);
+    palanca_cambios.asignar_color(COLOR_COMPARTIMENTO_CC, COLOR_BASE_CC, PALANCA_CC);
+    reposapies.asignar_color(COLOR_CHASIS);
 }
 
 _descapotable::~_descapotable(){
@@ -1986,7 +2108,7 @@ _descapotable::~_descapotable(){
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     //Inicializaciones en JOT
-    if(techo != NULL &&  ct_anterior != coeficiente_techo){
+    if(techo != NULL && ct_anterior != coeficiente_techo){
         delete techo;
         techo = NULL;
         //cout << "Borro techo" << endl;
@@ -1999,10 +2121,12 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
     
     if(maletero == NULL){
         maletero = new _maletero(giro_puerta_maletero);
+        maletero->asignar_color(COLOR_CARROCERIA, COLOR_MATRICULA);
         //cout << "Creo maletero" << endl;
     }
     if(techo == NULL){
         techo = new _techo(coeficiente_techo);
+        techo->asignar_color(COLOR_TECHO);
         //cout << "Creo techo" << endl;
     }
 
@@ -2061,7 +2185,36 @@ void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
             glTranslatef(0, alto_chasis_trasero/2, -0.15);
             parachoques_trasero.draw(modo, r, g, b, grosor);
         glPopMatrix();
+        
         //Luces traseras
+        //Luz trasera de marcha atras derecha
+        glPushMatrix();
+            glTranslatef(-largo/2 + largo_luz_t/2, alto_chasis + alto_pos_luz_t3, ancho_luz_t/2);
+            glScalef(coef_luz_trasera_inf, coef_luz_trasera_inf, coef_luz_trasera_inf);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera_marcha_atras.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Luz trasera de marcha atras izquierda
+        glPushMatrix();
+            glTranslatef(largo/2 - largo_luz_t/2, alto_chasis + alto_pos_luz_t3, ancho_luz_t/2);
+            glScalef(coef_luz_trasera_inf, coef_luz_trasera_inf, coef_luz_trasera_inf);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera_marcha_atras.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Luz trasera intermitente derecha
+        glPushMatrix();
+            glTranslatef(-largo/2 + largo_luz_t/2, alto_chasis + alto_pos_luz_t2, ancho_luz_t/2);
+            glScalef(coef_luz_trasera_inf, coef_luz_trasera_inf, coef_luz_trasera_inf);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera_int.draw(modo, r, g, b, grosor);
+        glPopMatrix();
+        //Luz trasera intermitente izquierda
+        glPushMatrix();
+            glTranslatef(largo/2 - largo_luz_t/2, alto_chasis + alto_pos_luz_t2, ancho_luz_t/2);
+            glScalef(coef_luz_trasera_inf, coef_luz_trasera_inf, coef_luz_trasera_inf);
+            glRotatef(180, 0, 1, 0);
+            luz_trasera_int.draw(modo, r, g, b, grosor);
+        glPopMatrix();
         //Luz trasera superior derecha
         glPushMatrix();
             glTranslatef(-largo/2 + largo_luz_t/2, alto_chasis + alto_pos_luz_t, ancho_luz_t/2);

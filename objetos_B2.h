@@ -12,7 +12,7 @@ const float AXIS_SIZE=5000;
 const int LADOS_CIRCULO=64;
 
 
-typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS} _modo;
+typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS, SOLID_RANDOM} _modo;
 
 //*************************************************************************
 // clase color
@@ -51,6 +51,7 @@ public:
 void 	draw_aristas(float r, float g, float b, int grosor);
 void    draw_solido(float r, float g, float b);
 void 	draw_solido_colores();
+void    draw_solido_colores_random();
 void 	draw(_modo modo, float r, float g, float b, float grosor);
 
 /* asignación de colores */
@@ -350,12 +351,15 @@ class _luz_antiniebla: public _triangulos3D
 public:
        _luz_antiniebla();
        void draw(_modo modo, float r, float g, float b, float grosor);
+       void asignar_color(_color color_izq, _color color_der);
        //Valores
        float largo1, alto1, ancho1;
        float largo2, alto2, ancho2;
        protected:
-       _semicilindro semicilindro;
-       _cubo cubo;
+       _semicilindro semicilindro_i;
+       _semicilindro semicilindro_d;
+       _cubo cubo_i;
+       _cubo cubo_d;
 };
 
 /*************************************************************************/
@@ -364,6 +368,7 @@ class _morro: public _triangulos3D
 public:
        _morro();
        void draw(_modo modo, float r, float g, float b, float grosor);
+       void asignar_color(_color color_intermitente, _color color_faro_an, _color barras_parrilla, _color color_parrilla, _color color_bigotera);
        //Valores
        float largo1, alto1, ancho1;
        float largo2, radio2, separacion2;
@@ -371,10 +376,11 @@ public:
        float radio_f2, ancho_f2, altura_f2;
        float largo_pos_antiniebla, alto_pos_antiniebla, ancho_pos_antiniebla;
        protected:
-       _cilindro cilindro;
-       _semicilindro semicilindro;
        _cubo cubo;
-       _luz_antiniebla luz_antiniebla;
+       _cubo bigotera;
+       _cubo parrilla;
+       _luz_antiniebla luz_antiniebla_i;
+       _luz_antiniebla luz_antiniebla_d;
 };
 
 /*************************************************************************/
@@ -383,6 +389,7 @@ class _parachoques_delantero: public _triangulos3D
 public:
     _parachoques_delantero();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_parachoques);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
@@ -398,6 +405,7 @@ class _luz_trasera: public _triangulos3D
 public:
     _luz_trasera();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_base, _color color_luz);
     //Valores
     float radio1, ancho1;
     float radio2, ancho2;
@@ -413,6 +421,7 @@ class _parachoques_trasero: public _triangulos3D
 public:
     _parachoques_trasero();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_parachoques);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
@@ -428,6 +437,7 @@ class _maletero: public  _triangulos3D
 public:
     _maletero(float _angulo_puerta = 0);
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_maletero, _color color_matricula);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
@@ -440,6 +450,7 @@ public:
     
     protected:
     _cubo cubo;
+    _cubo matricula;
 };   
 
 /*************************************************************************/
@@ -448,6 +459,7 @@ class _cuerpo_trasero: public  _triangulos3D
 public:
     _cuerpo_trasero();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_cuerpo_t);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
@@ -463,6 +475,7 @@ class _asiento: public  _triangulos3D
 public:
     _asiento();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_base, _color color_asiento);
     //Valores
     float largo1, alto1, ancho1;
     float largo2, alto2, ancho2;
@@ -470,6 +483,7 @@ public:
     float largo4, alto4, ancho4;
     protected:
     _cubo cubo;
+    _cubo base;
     _semicilindro semicilindro;
 };
 /*************************************************************************/
@@ -478,6 +492,7 @@ class _volante: public  _triangulos3D
 public:
     _volante();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_volante);
     //Valores
     float radio;
     float largo1, alto1, ancho1;
@@ -492,6 +507,7 @@ class _palanca_cambios: public  _triangulos3D
 public:
     _palanca_cambios();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_comp, _color color_base, _color color_palanca);
     //Valores
     float radio;
     float largo1, alto1, ancho1;
@@ -499,7 +515,7 @@ public:
     float radio3, alto3;
     float radio4;
     protected:
-    _cubo cubo;
+    _cubo cubo, base;
     _cilindro cilindro;
     _esfera esfera;
 };
@@ -511,6 +527,7 @@ public:
     _reposapies();
     ~_reposapies();
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_reposapies);
     //Valores
     float radio;
     float largo1, alto1, ancho1;
@@ -529,6 +546,7 @@ class _techo: public  _triangulos3D
 public:
     _techo(float _coeficiente = 0);
     void draw(_modo modo, float r, float g, float b, float grosor);
+    void asignar_color(_color color_techo);
     //Valores
     float coef, alpha;
     float altura_pos, anchura_pos;
@@ -569,7 +587,8 @@ public:
        float largo_luz_t, ancho_luz_t;
        float ancho_pos_puerta, alto_pos_puerta;
        float alto_pos_cuerpo_d, ancho_pos_cuerpo_d;
-       float alto_pos_faro_d, alto_pos_luz_t;
+       float alto_pos_faro_d, alto_pos_luz_t, alto_pos_luz_t2, alto_pos_luz_t3;
+       float coef_luz_trasera_inf;
        float ancho_pos_cuerpo_t;
        float ancho_pos_parachoques_t;
        float largo_asiento_t, ancho_pos_asiento_t;
@@ -578,6 +597,9 @@ public:
        float ancho_pos_reposapies;
        float alto_pos_techo, ancho_pos_techo;
        
+       _color COLOR_CARROCERIA;
+       _color COLOR_MATRICULA;
+       _color COLOR_TECHO;
        protected:
        _chasis chasis;
        _rueda rueda;
@@ -585,12 +607,13 @@ public:
        _carroceria_lateral* carroceria_lateral_der;
        _puerta puerta_izq;
        _puerta * puerta_der;
-       //_rotacion rotacion;
        _cuerpo_delantero cuerpo_delantero;
        _faro_delantero faro_delantero;
        _morro morro;
        _parachoques_delantero parachoques_delantero;
        _luz_trasera luz_trasera;
+       _luz_trasera luz_trasera_int;
+       _luz_trasera luz_trasera_marcha_atras;
        _parachoques_trasero parachoques_trasero;
        _maletero* maletero;
        _cuerpo_trasero cuerpo_trasero;
@@ -601,5 +624,6 @@ public:
        _techo* techo;
        _cubo matricula;
 };
+
 
 

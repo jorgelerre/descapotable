@@ -187,6 +187,7 @@ switch (toupper(Tecla1)){
 	case '2':modo=EDGES;break;
 	case '3':modo=SOLID;break;
 	case '4':modo=SOLID_COLORS;break;
+	case '5':modo=SOLID_RANDOM;break;
         case 'P':t_objeto=PIRAMIDE;break;
         case 'C':t_objeto=CUBO;break;
         case 'O':t_objeto=OBJETO_PLY;break;	
@@ -226,13 +227,13 @@ switch (Tecla1){
 	case GLUT_KEY_F1:
 	    if(descapotable.giro_dir_ruedas < 22){
 	        descapotable.giro_dir_ruedas+=0.5;  //Valores giro_dir_ruedas = [-22, 22]
-	        descapotable.giro_volante+=5;       //Valores giro_volante= [-220, 220]
+	        descapotable.giro_volante-=5;       //Valores giro_volante= [-220, 220]
 	    }
 	break;
 	case GLUT_KEY_F2:
 	    if(descapotable.giro_dir_ruedas > -22){
 	        descapotable.giro_dir_ruedas-=0.5;  //Valores giro_dir_ruedas = [-22, 22]
-	        descapotable.giro_volante-=5;       //Valores giro_volante= [-220, 220]
+	        descapotable.giro_volante+=5;       //Valores giro_volante= [-220, 220]
 	    }
 	break;
 	
@@ -345,22 +346,28 @@ void animacion(){
                     estado = 4;
                 break;
             case 4: //Marcha atras y giro de ruedas a la izquierda
-                if(descapotable.giro_dir_ruedas > -20)  //Giros = [0, -20]
+                if(descapotable.giro_dir_ruedas > -20){  //Giros = [0, -20]
 	                descapotable.giro_dir_ruedas-=0.2;
+	                descapotable.giro_volante+=2;   
+	            }
                 descapotable.giro_rot_ruedas-=2;
                 if(descapotable.giro_dir_ruedas <= -20)
                     estado = 5;
                 break;
             case 5: //Marcha adelante y giro de ruedas a la derecha
-                if(descapotable.giro_dir_ruedas < 20)  //Giros = [-20, 20]
+                if(descapotable.giro_dir_ruedas < 20){  //Giros = [-20, 20]
 	                descapotable.giro_dir_ruedas+=0.2;
+	                descapotable.giro_volante-=2;
+	            }
                 descapotable.giro_rot_ruedas+=2;
                 if(descapotable.giro_dir_ruedas >= 20)
                     estado = 6;
                 break;
             case 6: //Marcha adelante y giro de ruedas al centro
-                if(descapotable.giro_dir_ruedas > 0)  //Giros = [-20, 20]
+                if(descapotable.giro_dir_ruedas > 0){  //Giros = [-20, 20]
 	                descapotable.giro_dir_ruedas-=0.2;
+	                descapotable.giro_volante+=2;
+	            }
                 descapotable.giro_rot_ruedas+=3;
                 if(descapotable.giro_dir_ruedas <= 0)
                     estado = 7;
