@@ -2107,7 +2107,7 @@ _descapotable::~_descapotable(){
 
 
 void _descapotable::draw(_modo modo, float r, float g, float b, float grosor){
-    //Inicializaciones en JOT
+    //Inicializaciones en tiempo de ejecución
     if(techo != NULL && ct_anterior != coeficiente_techo){
         delete techo;
         techo = NULL;
