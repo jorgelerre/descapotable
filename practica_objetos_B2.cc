@@ -12,8 +12,8 @@
 using namespace std;
 
 // tipos
-typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CONO, ESFERA, CILINDRO, ROTACION_PLY, DESCAPOTABLE} _tipo_objeto;
-_tipo_objeto t_objeto=CUBO;
+typedef enum{/*CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CONO, ESFERA, CILINDRO, ROTACION_PLY,*/ DESCAPOTABLE} _tipo_objeto;
+_tipo_objeto t_objeto=DESCAPOTABLE;
 _modo   modo=POINTS;
 
 // variables que definen la posicion de la camara en coordenadas polares
@@ -32,6 +32,7 @@ bool animacion_activa = false;
 
 
 // objetos
+/*
 _cubo cubo;
 _piramide piramide(0.85,1.3);
 _objeto_ply  ply; 
@@ -39,11 +40,11 @@ _rotacion rotacion;
 _extrusion *extrusion;
 _cilindro cilindro(0.75, 1);
 _cono cono(0.75, 1);
-//_esfera esfera;
-_retrovisor esfera;
-_descapotable descapotable;
+_esfera esfera;
 _rotacion_ply rotacion_ply;
+*/
 
+_descapotable descapotable;
 
 //**************************************************************************
 //
@@ -120,6 +121,7 @@ void draw_objects()
 {
 
     switch (t_objeto){
+        /*
 	    case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
 	    case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
         case OBJETO_PLY: ply.draw(modo,1.0,0.6,0.0,5);break;
@@ -129,6 +131,7 @@ void draw_objects()
         case ESFERA: esfera.draw(modo,1.0,0.0,0.0,1);break;
         case CILINDRO: cilindro.draw(modo,1.0,0.0,0.0,1);break;
         case ROTACION_PLY: rotacion_ply.draw(modo,1.0,0.6,0.0,5);break;
+        */
         case DESCAPOTABLE: descapotable.draw(modo,1.0,0.6,0.0,5);break;
     }
 
@@ -188,6 +191,7 @@ switch (toupper(Tecla1)){
 	case '3':modo=SOLID;break;
 	case '4':modo=SOLID_COLORS;break;
 	case '5':modo=SOLID_RANDOM;break;
+	    /*
         case 'P':t_objeto=PIRAMIDE;break;
         case 'C':t_objeto=CUBO;break;
         case 'O':t_objeto=OBJETO_PLY;break;	
@@ -197,6 +201,7 @@ switch (toupper(Tecla1)){
         case 'E':t_objeto=ESFERA;break;
         case 'Y':t_objeto=CILINDRO;break;
         case 'Z':t_objeto=ROTACION_PLY;break;
+        */
         case 'D':t_objeto=DESCAPOTABLE;break;
         case 'A':animacion_activa = !animacion_activa; break;
 	}
@@ -411,43 +416,6 @@ void animacion(){
 int main(int argc, char *argv[] )
 {
  
-// perfil para rotacion
-
-vector<_vertex3f> perfil, poligono;
-_vertex3f aux;
-perfil.resize(24);
-perfil.clear();
-
-aux.x=1.0; aux.y=-1.0; aux.z=0.0;
-perfil.push_back(aux);
-aux.x=1.0; aux.y=-0.75; aux.z=0.0;
-perfil.push_back(aux);
-aux.x=0.5; aux.y=-0.75; aux.z=0.0;
-perfil.push_back(aux);
-float x = 0;
-float angulo = M_PI/20;
-for(int i = 0; i <= 20; i++){
-	aux.x = sin(x)*1.0; aux.y=-cos(x)+1; aux.z=0.0;
-    perfil.push_back(aux);
-    x+=angulo;
-}
-rotacion.parametros(perfil, 20);
-
-
-//Poligono por extrusion
-aux.x=1.0; aux.y=0.0; aux.z=1.0;
-poligono.push_back(aux);
-aux.x=1.0; aux.y=0.0; aux.z=-1.0;
-poligono.push_back(aux);
-aux.x=-1.2; aux.y=0.0; aux.z=-1.0;
-poligono.push_back(aux);
-aux.x=-0.8; aux.y=0.0; aux.z=0.0;
-poligono.push_back(aux);
-aux.x=-1.2; aux.y=0.0; aux.z=1.0;
-poligono.push_back(aux);
-
-extrusion= new _extrusion(poligono, 0.25, 1.0, 0.25, true, false);
-
 // se llama a la inicialización de glut
 glutInit(&argc, argv);
 
@@ -485,11 +453,6 @@ glutSpecialFunc(special_key);
 glutIdleFunc(animacion);
 // funcion de inicialización
 initialize();
-
-// creación del objeto ply
-ply.parametros(argv[1]);
-rotacion_ply.parametros(argv[2], 25);
-//ply = new _objeto_ply(argv[1]);
 
 // inicio del bucle de eventos
 glutMainLoop();
